@@ -22,13 +22,13 @@ class NoteDetail extends Component {
 
                 {
                     (this.props.headers) ? 
-                        this.props.headers.map((i, index) => {
+                        this.props.headers.map((header) => {
                             return (
-                                <div key={index}>
-                                    <h3>{i.text}</h3> 
-                                    { (i.paras.length > 0) ?
-                                        i.paras.map(i => {
-                                            return <p key={i.id}>{i.text}</p>
+                                <div key={header.id}>
+                                    <h3>{header.text}</h3> 
+                                    { (header.paras.length > 0) ?
+                                        header.paras.map(para => {
+                                            return <p key={para.id}>{para.text}</p>
                                         }) 
                                         : null 
                                     }
