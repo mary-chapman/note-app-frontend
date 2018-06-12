@@ -26,7 +26,12 @@ class NoteDetail extends Component {
                             return (
                                 <div key={index}>
                                     <h3>{i.text}</h3> 
-                                    { (i.paras.length > 0) ? console.log(i.paras[0]) : null }
+                                    { (i.paras.length > 0) ?
+                                        i.paras.map(i => {
+                                            return <p key={i.id}>{i.text}</p>
+                                        }) 
+                                        : null 
+                                    }
                                 </div>
                             )
                         }) : 
