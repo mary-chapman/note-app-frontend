@@ -14,6 +14,7 @@ class Main extends Component {
         }
 
         this.makeActive = this.makeActive.bind(this);
+        this.goBack = this.goBack.bind(this);
     }
 
     componentDidMount() {
@@ -34,13 +35,17 @@ class Main extends Component {
     async makeActive(e) {
         await this.setState({ activeNoteData: this.state.notes.filter(i => i.text == e.target.innerHTML)[0] })
         // await console.log("active data" + this.state.activeNoteData)
+    }
 
+    goBack() {
+        this.setState({activeNoteData: null})
     }
 
     render() {
         
         return (
             <div>
+                <button onClick={this.goBack}>back</button>
                 { this.state.activeNoteData === null ? 
                     <Notes handleClick={this.makeActive} notes={this.state.notes} name={this.state.notes}/> : 
                     <NoteDetail 
