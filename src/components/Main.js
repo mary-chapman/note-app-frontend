@@ -9,7 +9,7 @@ class Main extends Component {
         super(props);
 
         this.state = {
-            activeNote: null,
+            activeNoteData: null,
             notes: []
         }
 
@@ -28,20 +28,25 @@ class Main extends Component {
                     notes: [...this.state.notes, i]
                 })
             }))
-            .then(() => console.log(this.state.notes))
+            // .then(() => console.log(this.state.notes))
     }
 
-    makeActive(e) {
-        this.setState({ activeNote: e.target.innerHTML})
+    async makeActive(e) {
+        await this.setState({ activeNoteData: this.state.notes.filter(i => i.text == e.target.innerHTML)[0] })
+        await console.log(this.state.activeNoteData)
+
     }
 
     render() {
+        
         return (
             <div>
-                { this.state.activeNote === null ? 
-                    <Notes handleClick={this.makeActive} notes={this.state.notes}/> : 
-
-                    <NoteDetail />
+                { this.state.activeNoteData === null ? 
+                    <Notes handleClick={this.makeActive} notes={this.state.notes} name={this.state.notes}/> : 
+                    <NoteDetail 
+                        name={this.state.activeNoteData.text}
+                        headers={this.state.activeNoteData.headers}
+                        />
                 }
             </div>
         );

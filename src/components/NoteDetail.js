@@ -6,10 +6,17 @@ class NoteDetail extends Component {
 
     // }
 
+
     render() {
         return (
             <div>
-                Note Detail Name of Note:
+                <h2>{this.props.name}</h2>
+
+                { (this.props.headers) ? 
+                    this.props.headers.map((i, index) => <div key={index}>{i.text}</div>) : 
+                    null }
+                   
+                
             </div>
         );
     }
