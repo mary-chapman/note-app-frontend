@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Notes from './components/Notes';
 import Main from './components/Main';
+import NoteDetail from './components/NoteDetail';
 
 
 class App extends Component {
@@ -17,6 +18,8 @@ class App extends Component {
           <Route exact path="/signup" component={Signup} />
           <Route exact path="/notes" component={Notes} />
           <Route exact path="/main" component={Main} />
+          <Route exact path="/NoteDetail" component={NoteDetail} />
+
           <div>
             { console.log(document) }
           </div>

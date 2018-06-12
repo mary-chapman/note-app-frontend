@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
+import './Notes.css';
+
 class Notes extends Component {
     constructor(props) {
         super(props);
@@ -8,7 +10,7 @@ class Notes extends Component {
 
     render() {
         return (
-            <div>
+            <div className="notes">
                 <h1>notes</h1>
                 <button>new note</button> 
                 {/* { console.log(this.props.notes.length) } */}

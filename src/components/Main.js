@@ -33,7 +33,7 @@ class Main extends Component {
 
     async makeActive(e) {
         await this.setState({ activeNoteData: this.state.notes.filter(i => i.text == e.target.innerHTML)[0] })
-        await console.log(this.state.activeNoteData)
+        // await console.log("active data" + this.state.activeNoteData)
 
     }
 
@@ -46,7 +46,8 @@ class Main extends Component {
                     <NoteDetail 
                         name={this.state.activeNoteData.text}
                         headers={this.state.activeNoteData.headers}
-                        />
+                        paras={this.state.activeNoteData.headers}
+                    />
                 }
             </div>
         );

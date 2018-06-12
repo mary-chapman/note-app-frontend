@@ -1,0 +1,15 @@
+.notes div {
+    margin-top: 20px;
+    height: 20px;
+    width: 100px;
+    background-color: #3884ff;
+    color: white;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 5px;
+}
+
+.notes div:hover {
+    cursor: pointer;
+    background-color: #a9c5f2;
+}
