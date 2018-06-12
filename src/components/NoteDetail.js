@@ -4,10 +4,15 @@ import axios from 'axios';
 import './NoteDetail.css'
 
 class NoteDetail extends Component {
-    render() {
+    constructor(props) {
+        super(props);
+
+        this.readMode = this.readMode.bind(this);
+    }
+
+    readMode() {
         return (
-            <div className="noteDetail">
-                <h1>{this.props.name}</h1>
+            <div className="readMode">
                 { (this.props.headers) ? 
                         this.props.headers.map((header) => {
                             return (
@@ -24,9 +29,13 @@ class NoteDetail extends Component {
                                 </div>
                             )
                         }) : null }
-
-
-                
+            </div>
+        )
+    }
+    render() {
+        return (
+            <div className="noteDetail">
+                {this.readMode()}
             </div>
         );
     }
