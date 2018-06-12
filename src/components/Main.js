@@ -9,10 +9,26 @@ class Main extends Component {
         super(props);
 
         this.state = {
-            activeNote: null
+            activeNote: null,
+            notes: []
         }
 
         this.makeActive = this.makeActive.bind(this);
+    }
+
+    componentDidMount() {
+        var username = document.cookie.split("=")[1];
+        
+        axios.get('http://localhost:8080/users')
+            // will later be the cookie of the current user
+            .then(res => res.data.filter(i => i.userName === "user1"))
+            //.then(res => console.log(res[0].titles))
+            .then(user => user[0].titles.map(i =>{
+                this.setState({
+                    notes: [...this.state.notes, i]
+                })
+            }))
+            .then(() => console.log(this.state.notes))
     }
 
     makeActive(e) {
@@ -23,7 +39,8 @@ class Main extends Component {
         return (
             <div>
                 { this.state.activeNote === null ? 
-                    <Notes handleClick={this.makeActive}/> : 
+                    <Notes handleClick={this.makeActive} notes={this.state.notes}/> : 
+
                     <NoteDetail />
                 }
             </div>
