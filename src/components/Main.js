@@ -62,31 +62,22 @@ class Main extends Component {
     //     console.log(this.state.notes.text)
     //     this.setState({ notes: this.state.notes.filter(text => text.id != title.id) })
     // }
-    editTitle(title, index, e) {
-        console.log(e.target.value)
-        // // console.log(e.target.value)
-        // //console.log(this.state.notes)
 
+    editTitle(title, index, e) {
         var stateCopy = [...this.state.notes]; // create copy of state
-        //console.log(stateCopy[index].text)
         stateCopy[index].text = e.target.value; //new value
-        this.setState({ stateCopy }) // update the state with the new value
-        
-        // console.log(this.inputVal.current.value)
-        
+        this.setState({ stateCopy }) // update the state with the new value   
     }
 
     editHeader(header, currTitleIndex, currHeaderIndex, e) {
         var stateCopy = [...this.state.notes]; // create copy of state
-        stateCopy[currTitleIndex].headers[0].text = e.target.value; //new value
+        stateCopy[currTitleIndex].headers[currHeaderIndex].text = e.target.value; //new value
         this.setState({ stateCopy }) // update the state with the new value
     }
 
     sendEditedTitleToDb(title, e) {
-        console.log("on blur" + e.target.value)
         var data = { text: e.target.value}
         var objToSend = JSON.stringify(data);
-
         axios.patch(`http://localhost:8082/titles/${title}`, objToSend, {
             headers: {
                 'Content-Type': 'application/json',
@@ -95,19 +86,14 @@ class Main extends Component {
     }
 
     sendEditedHeaderToDb(headerId, e) {
-        console.log("on blur" + e.target.value)
         var data = { text: e.target.value}
         var objToSend = JSON.stringify(data);
-
         axios.patch(`http://localhost:8082/headers/${headerId}`, objToSend, {
             headers: {
                 'Content-Type': 'application/json',
             },
         })
     }
-
-
-
 
     render() {
         return (
@@ -116,13 +102,10 @@ class Main extends Component {
                     this.state.notes.map((title,titleIndex) => {
                         return (
                             <div key={titleIndex} >
-                                {/* <input onChange={this.test(title)} /> */}
                                 <input 
                                     className="title"
                                     onChange={(e) => this.editTitle(title, titleIndex, e)}
                                     onBlur = {(e) => this.sendEditedTitleToDb(title.id, e)}
-                                    // onChange={() => this.editTitle(title, index)} 
-                                    // ref={this.inputVal} 
                                     value={title.text} 
                                 />
                                 { (title.headers) ? 
@@ -149,34 +132,4 @@ class Main extends Component {
 
 
 export default Main;
-
-                {/* <div>NOTES</div>
-                <button onClick={this.addNote}>add note</button>
-                <input id="new" />
-
-                { (this.state.notes) ? 
-                    this.state.notes.map(title => {
-                        return (
-                            <div key={title.id} >
-                                <h1 onClick={this.editMode} id="title">{title.text}</h1>
-                                { ( title.headers) ? 
-                                    title.headers.map(header => {
-                                        return (
-                                            <div key={header.id}>
-                                                <h3>{header.text}</h3>
-                                                { ( header.paras.length > 0) ? 
-                                                    header.paras.map(para => {
-                                                        return <p key={para.id}>{para.text}</p>
-                                                    }) : null
-                                                }
-                                            </div>
-                                        )
-                                    }) : null
-                                }
-                            </div>
-                        )
-                        
-                    }) : <h1>loading</h1> 
-                } */}
-
 
