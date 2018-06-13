@@ -22,6 +22,7 @@ class Main extends Component {
         
         this.addNote = this.addNote.bind(this);
         this.editTitle = this.editTitle.bind(this);
+        this.editHeader = this.editHeader.bind(this);
         // this.test = this.test.bind(this);
 
     }
@@ -74,6 +75,20 @@ class Main extends Component {
         
     }
 
+    editHeader(title, index, e) {
+        console.log(e.target.value)
+        // // console.log(e.target.value)
+        // //console.log(this.state.notes)
+
+        var stateCopy = [...this.state.notes]; // create copy of state
+        //console.log(stateCopy[index].text)
+        stateCopy[index].text = e.target.value; //new value
+        this.setState({ stateCopy }) // update the state with the new value
+        
+        // console.log(this.inputVal.current.value)
+        
+    }
+
     sendEditedTitleToDb(title, e) {
         console.log("on blur" + e.target.value)
         var data = { text: e.target.value}
@@ -106,9 +121,13 @@ class Main extends Component {
                                     value={title.text} 
                                 />
                                 { (title.headers) ? 
-                                   title.headers.map((title,index) => {
+                                   title.headers.map((header,index) => {
                                         return (
-                                            <div>header</div>
+                                            <div key={index}>
+                                                <input
+                                                    onChange={(e) => this.editTitle(header, index, e)}
+                                                    value={header.text} />
+                                            </div>
                                         ) 
                                     }) : null 
                                 }
