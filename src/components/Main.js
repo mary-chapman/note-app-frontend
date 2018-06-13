@@ -10,11 +10,12 @@ class Main extends Component {
 
         this.state = {
             activeNoteData: null,
-            notes: []
+            notes: [],
         }
 
         this.makeActive = this.makeActive.bind(this);
         this.goBack = this.goBack.bind(this);
+        this.addNote = this.addNote.bind(this);
     }
 
     componentDidMount() {
@@ -39,15 +40,42 @@ class Main extends Component {
     goBack() {
         this.setState({activeNoteData: null})
     }
+    addNote() {
+        console.log()
+        var data = {
+            userId: 1,
+            text: document.getElementById("newNote").value
+        }
+        axios.post('http://localhost:8082/titles', data, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(req => this.setState({ 
+            notes: [ ...this.state.notes, req.data ]
+        }))
+    }
+
+    editPara(e) {
+        console.log(this.state.activeNoteData)
+    //     this.setState({
+    //         notes: [...this.state.notes, e.target.value]
+    //    })
+    }
 
     render() {
         
         return (
             <div>
                 <button onClick={this.goBack}>back</button>
+                <button onClick={this.addNote}>new note</button> 
+                <input id="newNote" />
+
                 { console.log(this.state.notes) }
                 { this.state.activeNoteData === null ? 
-                    <Notes notes={this.state.notes} handleClick={this.makeActive} /> :
+                    <Notes 
+                        notes={this.state.notes} 
+                        handleClick={this.makeActive} /> :
                     <NoteDetail 
                         name={this.state.activeNoteData.text}
                         headers={this.state.activeNoteData.headers}

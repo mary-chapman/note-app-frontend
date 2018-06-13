@@ -13,15 +13,10 @@ class NoteDetail extends Component {
 
         this.readMode = this.readMode.bind(this);
         this.writeMode = this.writeMode.bind(this);
-        this.editNote = this.editNote.bind(this);
+        // this.handleParaEdit = this.handleParaEdit.bind(this);
 
 
     }
-
-    editNote() {
-
-    }
-
     readMode() {
         return (
             <div className="readMode">
@@ -54,7 +49,7 @@ class NoteDetail extends Component {
                                     <input value={header.text} />
                                     { (header.paras.length > 0) ?
                                         header.paras.map(para => {
-                                            return <input key={para.id} value={para.text} />
+                                            return <input key={para.id} value={para.text}  />
                                         }) : null }
                                     { (header.codeblocks.length > 0) ?
                                         header.codeblocks.map(codeblock => {
