@@ -23,6 +23,8 @@ class Main extends Component {
         this.addNote = this.addNote.bind(this);
         this.editTitle = this.editTitle.bind(this);
         this.editHeader = this.editHeader.bind(this);
+        this.editPara = this.editPara.bind(this);
+
         this.sendEditedHeaderToDb = this.sendEditedHeaderToDb.bind(this);
         // this.test = this.test.bind(this);
 
@@ -75,6 +77,10 @@ class Main extends Component {
         this.setState({ stateCopy }) // update the state with the new value
     }
 
+    editPara(para, currTitleIndex, currHeaderIndex, currParaIndex, e) {
+        // console.log(this.state.notes[currTitleIndex].headers[currHeaderIndex].paras[currParaIndex])
+    }
+
     sendEditedTitleToDb(title, e) {
         var data = { text: e.target.value}
         var objToSend = JSON.stringify(data);
@@ -113,9 +119,25 @@ class Main extends Component {
                                         return (
                                             <div key={headerIndex}>
                                                 <input
+                                                    className="header"
                                                     onChange={(e) => this.editHeader(header, titleIndex, headerIndex, e)}
                                                     onBlur = {(e) => this.sendEditedHeaderToDb(header.id, e)}
                                                     value={header.text} />
+                                                        { (header.paras) ? 
+                                                            header.paras.map((para, paraIndex) => {
+                                                                return (
+                                                                    <div key={paraIndex} >
+                                                                        <input 
+                                                                            className="para"
+                                                                            onChange={(e) => this.editPara(para, titleIndex, headerIndex, paraIndex, e)}
+                                                                            // onBlur = {(e) => this.sendEditedParaToDb(title.id, e)}
+                                                                            value={para.text} 
+                                                                        />
+                                                                    </div>
+                                                                ) 
+                                                            }) : null
+                                                        }
+                                                        
                                             </div>
                                         ) 
                                     }) : null 

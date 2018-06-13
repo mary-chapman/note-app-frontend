@@ -1,7 +1,11 @@
 .title {
-    font-size: 16pt;
+    font-size: 20pt;
 }
 
 .header {
+    font-size: 16pt;
+}
+
+.para {
     font-size: 12pt;
 }
