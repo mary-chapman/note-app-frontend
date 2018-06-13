@@ -12,10 +12,6 @@ class Main extends Component {
             activeNoteData: null,
             notes: [],
         }
-
-        this.makeActive = this.makeActive.bind(this);
-        this.goBack = this.goBack.bind(this);
-        this.addNote = this.addNote.bind(this);
     }
 
     componentDidMount() {
@@ -32,56 +28,39 @@ class Main extends Component {
             }))
     }
 
-    async makeActive(e) {
-        await this.setState({ activeNoteData: this.state.notes.filter(i => i.text == e.target.innerHTML)[0] })
-        // await console.log("active data" + this.state.activeNoteData)
-    }
-
-    goBack() {
-        this.setState({activeNoteData: null})
-    }
-    addNote() {
-        console.log()
-        var data = {
-            userId: 1,
-            text: document.getElementById("newNote").value
-        }
-        axios.post('http://localhost:8082/titles', data, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(req => this.setState({ 
-            notes: [ ...this.state.notes, req.data ]
-        }))
-    }
-
-    editPara(e) {
-        console.log(this.state.activeNoteData)
-    //     this.setState({
-    //         notes: [...this.state.notes, e.target.value]
-    //    })
-    }
 
     render() {
         
         return (
-            <div>
-                <button onClick={this.goBack}>back</button>
-                <button onClick={this.addNote}>new note</button> 
-                <input id="newNote" />
-
-                { console.log(this.state.notes) }
-                { this.state.activeNoteData === null ? 
-                    <Notes 
-                        notes={this.state.notes} 
-                        handleClick={this.makeActive} /> :
-                    <NoteDetail 
-                        name={this.state.activeNoteData.text}
-                        headers={this.state.activeNoteData.headers}
-                        paras={this.state.activeNoteData.headers}
-                    />
+            <div className="readMode">
+                {/* { console.log(this.state.notes)} */}
+                <div>NOTES</div>
+                { (this.state.notes) ? 
+                    this.state.notes.map(title => {
+                        
+                        return (
+                            <div>
+                                <h1 key={title.id}>{title.text}</h1>
+                                { ( title.headers.length > 0) ? 
+                                    title.headers.map(header => {
+                                        return (
+                                            <div>
+                                                <h3>{header.text}</h3>
+                                                { ( header.paras.length > 0) ? 
+                                                    header.paras.map(para => {
+                                                        return <p>{para.text}</p>
+                                                    }) : null
+                                                }
+                                            </div>
+                                        )
+                                    }) : null
+                                }
+                            </div>
+                        )
+                        
+                    }) : <h1>loading</h1> 
                 }
+
             </div>
         );
     }

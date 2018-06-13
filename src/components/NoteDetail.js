@@ -13,10 +13,16 @@ class NoteDetail extends Component {
 
         this.readMode = this.readMode.bind(this);
         this.writeMode = this.writeMode.bind(this);
+        this.addHeader = this.addHeader.bind(this);
         // this.handleParaEdit = this.handleParaEdit.bind(this);
 
 
     }
+    addHeader() {
+        console.log("ADD")
+        return <textbox />
+    }
+
     readMode() {
         return (
             <div className="readMode">
@@ -66,6 +72,10 @@ class NoteDetail extends Component {
             <div className="noteDetail">
                 <button onClick={() => this.setState({ readMode: false })}>edit</button>
                 <button onClick={() => this.setState({ readMode: true })}>save</button>
+                <br />
+                <button onClick={this.addHeader}>ADD HEADER</button>
+                <button>ADD PARA</button>
+                <button>ADD CODE</button>
 
                 { (this.state.readMode) ? 
                     this.readMode() : this.writeMode()
