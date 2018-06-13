@@ -72,6 +72,18 @@ class Main extends Component {
         
     }
 
+    sendEditedTitleToDb(title, e) {
+        console.log("on blur" + e.target.value)
+        var data = { text: e.target.value}
+        var objToSend = JSON.stringify(data);
+
+        axios.patch(`http://localhost:8082/titles/${title}`, objToSend, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
 
 
 
@@ -85,6 +97,7 @@ class Main extends Component {
                                 {/* <input onChange={this.test(title)} /> */}
                                 <input 
                                     onChange={(e) => this.editTitle(title, index, e)}
+                                    onBlur = {(e) => this.sendEditedTitleToDb(title.id, e)}
                                     // onChange={() => this.editTitle(title, index)} 
                                     // ref={this.inputVal} 
                                     value={title.text} 
