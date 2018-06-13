@@ -20,16 +20,15 @@ class Main extends Component {
     componentDidMount() {
         var username = document.cookie.split("=")[1];
         
-        axios.get('http://localhost:8080/users')
-            // will later be the cookie of the current user
-            .then(res => res.data.filter(i => i.userName === "user1"))
-            //.then(res => console.log(res[0].titles))
-            .then(user => user[0].titles.map(i =>{
+        axios.get('http://localhost:8082/titles')
+            //***** temporarily hardcoded - change later *****
+            .then(res => res.data.filter(i => i.userId === 1))
+            //.then(res => console.log(res[0]))
+            .then(res => res.map(i =>{
                 this.setState({
-                    notes: [...this.state.notes, i]
+                     notes: [...this.state.notes, i]
                 })
             }))
-            // .then(() => console.log(this.state.notes))
     }
 
     async makeActive(e) {
@@ -46,8 +45,9 @@ class Main extends Component {
         return (
             <div>
                 <button onClick={this.goBack}>back</button>
+                { console.log(this.state.notes) }
                 { this.state.activeNoteData === null ? 
-                    <Notes handleClick={this.makeActive} notes={this.state.notes} name={this.state.notes}/> : 
+                    <Notes notes={this.state.notes} handleClick={this.makeActive} /> :
                     <NoteDetail 
                         name={this.state.activeNoteData.text}
                         headers={this.state.activeNoteData.headers}

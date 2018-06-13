@@ -6,3 +6,9 @@
     margin-left: auto;
     padding: 5px;
 }
+
+input {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}

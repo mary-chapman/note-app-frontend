@@ -7,7 +7,19 @@ class NoteDetail extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            readMode: true
+        }
+
         this.readMode = this.readMode.bind(this);
+        this.writeMode = this.writeMode.bind(this);
+        this.editNote = this.editNote.bind(this);
+
+
+    }
+
+    editNote() {
+
     }
 
     readMode() {
@@ -32,10 +44,38 @@ class NoteDetail extends Component {
             </div>
         )
     }
+    writeMode() {
+        return (
+            <div className="readMode">
+                { (this.props.headers) ? 
+                        this.props.headers.map((header) => {
+                            return (
+                                <div key={header.id}>
+                                    <input value={header.text} />
+                                    { (header.paras.length > 0) ?
+                                        header.paras.map(para => {
+                                            return <input key={para.id} value={para.text} />
+                                        }) : null }
+                                    { (header.codeblocks.length > 0) ?
+                                        header.codeblocks.map(codeblock => {
+                                            return <input className="code" key={codeblock.id} value={codeblock.text} />
+                                        }) : null }
+                                </div>
+                            )
+                        }) : null }
+            </div>
+        )
+    }
     render() {
         return (
             <div className="noteDetail">
-                {this.readMode()}
+                <button onClick={() => this.setState({ readMode: false })}>edit</button>
+                <button onClick={() => this.setState({ readMode: true })}>save</button>
+
+                { (this.state.readMode) ? 
+                    this.readMode() : this.writeMode()
+                }
+                
             </div>
         );
     }
