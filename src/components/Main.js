@@ -77,15 +77,9 @@ class Main extends Component {
     }
 
     editHeader(header, currTitleIndex, currHeaderIndex, e) {
-        //var activeNote = this.state.notes[titleId - 1][headerId - 1];
-        console.log(currHeaderIndex)
-        console.log(this.state.notes[currTitleIndex].headers[0].text);
-
         var stateCopy = [...this.state.notes]; // create copy of state
         stateCopy[currTitleIndex].headers[0].text = e.target.value; //new value
         this.setState({ stateCopy }) // update the state with the new value
-    
-        
     }
 
     sendEditedTitleToDb(title, e) {
@@ -100,12 +94,12 @@ class Main extends Component {
         })
     }
 
-    sendEditedHeaderToDb(header, e) {
+    sendEditedHeaderToDb(headerId, e) {
         console.log("on blur" + e.target.value)
         var data = { text: e.target.value}
         var objToSend = JSON.stringify(data);
 
-        axios.patch(`http://localhost:8082/headers/${header}`, objToSend, {
+        axios.patch(`http://localhost:8082/headers/${headerId}`, objToSend, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -137,7 +131,7 @@ class Main extends Component {
                                             <div key={headerIndex}>
                                                 <input
                                                     onChange={(e) => this.editHeader(header, titleIndex, headerIndex, e)}
-                                                    //onBlur = {(e) => this.sendEditedHeaderToDb(header.id, e)}
+                                                    onBlur = {(e) => this.sendEditedHeaderToDb(header.id, e)}
                                                     value={header.text} />
                                             </div>
                                         ) 
