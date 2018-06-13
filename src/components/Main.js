@@ -81,12 +81,9 @@ class Main extends Component {
         console.log(currHeaderIndex)
         console.log(this.state.notes[currTitleIndex].headers[0].text);
 
-        //console.log(currTitle.text);
-        //titleIndex = this.state.notes.indexOf(currTitle);
-
-        // var stateCopy = [...this.state.notes]; // create copy of state
-        // stateCopy[titleId - 1][headerId - 1].text = e.target.value; //new value
-        // this.setState({ stateCopy }) // update the state with the new value
+        var stateCopy = [...this.state.notes]; // create copy of state
+        stateCopy[currTitleIndex].headers[0].text = e.target.value; //new value
+        this.setState({ stateCopy }) // update the state with the new value
     
         
     }
