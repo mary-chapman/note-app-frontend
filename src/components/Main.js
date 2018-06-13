@@ -138,13 +138,16 @@ class Main extends Component {
     }
 
     sendEditedParaToDb(paraId, e) {
-        var data = { text: e.target.value}
-        var objToSend = JSON.stringify(data);
-        axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+        if (e.target.value) {
+            var data = { text: e.target.value}
+            var objToSend = JSON.stringify(data);
+            axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+        }
+
     }
 
     render() {
@@ -152,13 +155,13 @@ class Main extends Component {
 
         return (
             <div className="main">
-                <div class="headerDisplay">
+                <div className="headerDisplay">
                     <h1>notes</h1>
                 </div>
 
                 <div className="bodyDisplay">
-                <button>add new note</button>
-                <button>add new title</button>
+                <button className="addNoteBtn">add note</button>
+                <button className="addTitleBtn">add title</button>
                 { (this.state.notes) ? 
                     this.state.notes.map((title,titleIndex) => {
                         
@@ -184,13 +187,14 @@ class Main extends Component {
                                                     value={header.text} />
                                                 {/* <input onClick={() => this.getcurrentCursorLocation(titleIndex, headerIndex)} /> */}
                                                         { (header.paras) ? 
-                                                            header.paras.filter(para => para.text).map((para, paraIndex) => {
+                                                            header.paras.map((para, paraIndex) => {
                                                                 console.log(para.innerHTML);
 
                                                                 return (
                                                                     <div key={paraIndex} >
                                                                         <Textarea 
                                                                             // rows="1"
+                                                                            style={{ resize: "none" }}
                                                                             className="para"
                                                                             onChange={(e) => this.editPara(para, titleIndex, headerIndex, paraIndex, e)}
                                                                             onBlur = {(e) => this.sendEditedParaToDb(para.id, e)}
