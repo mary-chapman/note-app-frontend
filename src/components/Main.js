@@ -4,6 +4,8 @@ import axios from 'axios';
 import Notes from './Notes'; 
 import NoteDetail from './NoteDetail';
 
+import Textarea from "react-textarea-autosize";
+
 import './Main.css'
 
 class Main extends Component {
@@ -146,13 +148,20 @@ class Main extends Component {
     }
 
     render() {
+
+
         return (
             <div className="main">
-                <h1>notes</h1>
+                <div class="headerDisplay">
+                    <h1>notes</h1>
+                </div>
+
+                <div className="bodyDisplay">
                 <button>add new note</button>
                 <button>add new title</button>
                 { (this.state.notes) ? 
                     this.state.notes.map((title,titleIndex) => {
+                        
                         return (
                             <div key={titleIndex} >
                                 <input 
@@ -161,7 +170,9 @@ class Main extends Component {
                                     onBlur = {(e) => this.sendEditedTitleToDb(title.id, e)}
                                     value={title.text} 
                                 />
-                                <input onClick={() => this.getcurrentCursorLocation(titleIndex)} />
+                                {/* <textarea 
+                                    className="para" 
+                                    onClick={() => this.getcurrentCursorLocation(titleIndex)} /> */}
                                 { (title.headers) ? 
                                    title.headers.map((header,headerIndex) => {
                                         return (
@@ -171,21 +182,25 @@ class Main extends Component {
                                                     onChange={(e) => this.editHeader(header, titleIndex, headerIndex, e)}
                                                     onBlur = {(e) => this.sendEditedHeaderToDb(header.id, e)}
                                                     value={header.text} />
-                                                <input onClick={() => this.getcurrentCursorLocation(titleIndex, headerIndex)} />
+                                                {/* <input onClick={() => this.getcurrentCursorLocation(titleIndex, headerIndex)} /> */}
                                                         { (header.paras) ? 
-                                                            header.paras.map((para, paraIndex) => {
+                                                            header.paras.filter(para => para.text).map((para, paraIndex) => {
+                                                                console.log(para.innerHTML);
+
                                                                 return (
                                                                     <div key={paraIndex} >
-                                                                        <textarea 
+                                                                        <Textarea 
+                                                                            // rows="1"
                                                                             className="para"
                                                                             onChange={(e) => this.editPara(para, titleIndex, headerIndex, paraIndex, e)}
                                                                             onBlur = {(e) => this.sendEditedParaToDb(para.id, e)}
                                                                             value={para.text} 
                                                                         />
-                                                                        <textarea 
+                                                                        {/* <Textarea 
+                                                                            className="para"
                                                                             onClick={() => this.getcurrentCursorLocation(titleIndex, headerIndex, paraIndex)} 
                                                                             onBlur = {(e) => this.createNewPara(header.id, e)}
-                                                                        />
+                                                                        /> */}
                                                                     </div>
                                                                 ) 
                                                             }) : null
@@ -201,10 +216,15 @@ class Main extends Component {
                         
                 }
             </div>
+        </div>
         )
     }
 }
 
 
+
 export default Main;
+
+
+
 
