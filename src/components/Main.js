@@ -23,6 +23,7 @@ class Main extends Component {
         this.addNote = this.addNote.bind(this);
         this.editTitle = this.editTitle.bind(this);
         this.editHeader = this.editHeader.bind(this);
+        this.sendEditedHeaderToDb = this.sendEditedHeaderToDb.bind(this);
         // this.test = this.test.bind(this);
 
     }
@@ -75,17 +76,18 @@ class Main extends Component {
         
     }
 
-    editHeader(title, index, e) {
-        console.log(e.target.value)
-        // // console.log(e.target.value)
-        // //console.log(this.state.notes)
+    editHeader(header, currTitleIndex, currHeaderIndex, e) {
+        //var activeNote = this.state.notes[titleId - 1][headerId - 1];
+        console.log(currHeaderIndex)
+        console.log(this.state.notes[currTitleIndex].headers[0].text);
 
-        var stateCopy = [...this.state.notes]; // create copy of state
-        //console.log(stateCopy[index].text)
-        stateCopy[index].text = e.target.value; //new value
-        this.setState({ stateCopy }) // update the state with the new value
-        
-        // console.log(this.inputVal.current.value)
+        //console.log(currTitle.text);
+        //titleIndex = this.state.notes.indexOf(currTitle);
+
+        // var stateCopy = [...this.state.notes]; // create copy of state
+        // stateCopy[titleId - 1][headerId - 1].text = e.target.value; //new value
+        // this.setState({ stateCopy }) // update the state with the new value
+    
         
     }
 
@@ -101,6 +103,18 @@ class Main extends Component {
         })
     }
 
+    sendEditedHeaderToDb(header, e) {
+        console.log("on blur" + e.target.value)
+        var data = { text: e.target.value}
+        var objToSend = JSON.stringify(data);
+
+        axios.patch(`http://localhost:8082/headers/${header}`, objToSend, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
 
 
 
@@ -108,24 +122,25 @@ class Main extends Component {
         return (
             <div className="main">
                 { (this.state.notes) ? 
-                    this.state.notes.map((title,index) => {
+                    this.state.notes.map((title,titleIndex) => {
                         return (
-                            <div key={index} >
+                            <div key={titleIndex} >
                                 {/* <input onChange={this.test(title)} /> */}
                                 <input 
                                     className="title"
-                                    onChange={(e) => this.editTitle(title, index, e)}
+                                    onChange={(e) => this.editTitle(title, titleIndex, e)}
                                     onBlur = {(e) => this.sendEditedTitleToDb(title.id, e)}
                                     // onChange={() => this.editTitle(title, index)} 
                                     // ref={this.inputVal} 
                                     value={title.text} 
                                 />
                                 { (title.headers) ? 
-                                   title.headers.map((header,index) => {
+                                   title.headers.map((header,headerIndex) => {
                                         return (
-                                            <div key={index}>
+                                            <div key={headerIndex}>
                                                 <input
-                                                    onChange={(e) => this.editTitle(header, index, e)}
+                                                    onChange={(e) => this.editHeader(header, titleIndex, headerIndex, e)}
+                                                    //onBlur = {(e) => this.sendEditedHeaderToDb(header.id, e)}
                                                     value={header.text} />
                                             </div>
                                         ) 
