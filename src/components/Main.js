@@ -78,7 +78,10 @@ class Main extends Component {
     }
 
     editPara(para, currTitleIndex, currHeaderIndex, currParaIndex, e) {
-        // console.log(this.state.notes[currTitleIndex].headers[currHeaderIndex].paras[currParaIndex])
+        console.log(this.state.notes[currTitleIndex].headers[currHeaderIndex].paras[currParaIndex])
+        var stateCopy = [...this.state.notes]; // create copy of state
+        stateCopy[currTitleIndex].headers[currHeaderIndex].paras[currParaIndex].text = e.target.value;
+        this.setState({ stateCopy });
     }
 
     sendEditedTitleToDb(title, e) {
@@ -95,6 +98,16 @@ class Main extends Component {
         var data = { text: e.target.value}
         var objToSend = JSON.stringify(data);
         axios.patch(`http://localhost:8082/headers/${headerId}`, objToSend, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+
+    sendEditedParaToDb(paraId, e) {
+        var data = { text: e.target.value}
+        var objToSend = JSON.stringify(data);
+        axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -130,7 +143,7 @@ class Main extends Component {
                                                                         <input 
                                                                             className="para"
                                                                             onChange={(e) => this.editPara(para, titleIndex, headerIndex, paraIndex, e)}
-                                                                            // onBlur = {(e) => this.sendEditedParaToDb(title.id, e)}
+                                                                            onBlur = {(e) => this.sendEditedParaToDb(para.id, e)}
                                                                             value={para.text} 
                                                                         />
                                                                     </div>
