@@ -4,6 +4,8 @@ import axios from 'axios';
 import Notes from './Notes'; 
 import NoteDetail from './NoteDetail';
 
+import './Main.css'
+
 class Main extends Component {
     constructor(props) {
         super(props);
@@ -96,12 +98,20 @@ class Main extends Component {
                             <div key={index} >
                                 {/* <input onChange={this.test(title)} /> */}
                                 <input 
+                                    className="title"
                                     onChange={(e) => this.editTitle(title, index, e)}
                                     onBlur = {(e) => this.sendEditedTitleToDb(title.id, e)}
                                     // onChange={() => this.editTitle(title, index)} 
                                     // ref={this.inputVal} 
                                     value={title.text} 
                                 />
+                                { (title.headers) ? 
+                                   title.headers.map((title,index) => {
+                                        return (
+                                            <div>header</div>
+                                        ) 
+                                    }) : null 
+                                }
                             </div>
                         )
                     }) : null
