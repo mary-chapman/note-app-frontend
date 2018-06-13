@@ -20,7 +20,6 @@ class Main extends Component {
         
         this.addNote = this.addNote.bind(this);
         this.editTitle = this.editTitle.bind(this);
-        this.sendEditedTitleToDb = this.sendEditedTitleToDb.bind(this);
         // this.test = this.test.bind(this);
 
     }
@@ -59,28 +58,18 @@ class Main extends Component {
     //     console.log(this.state.notes.text)
     //     this.setState({ notes: this.state.notes.filter(text => text.id != title.id) })
     // }
-    editTitle(title, index) {
+    editTitle(title, index, e) {
+        console.log(e.target.value)
+        // // console.log(e.target.value)
+        // //console.log(this.state.notes)
 
         var stateCopy = [...this.state.notes]; // create copy of state
-        stateCopy[index].text = this.inputVal.current.value; //new value
+        //console.log(stateCopy[index].text)
+        stateCopy[index].text = e.target.value; //new value
         this.setState({ stateCopy }) // update the state with the new value
         
-        // axios.post()
-        console.log(this.inputVal.current.value)
+        // console.log(this.inputVal.current.value)
         
-    }
-
-    sendEditedTitleToDb(title) {
-        console.log(this.inputVal.current.value)
-        var data = { text: this.inputVal.current.value }
-        var objToSend = JSON.stringify(data);
-
-        console.log(title)
-        axios.patch(`http://localhost:8082/titles/${title}`, objToSend, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
     }
 
 
@@ -95,15 +84,11 @@ class Main extends Component {
                             <div key={index} >
                                 {/* <input onChange={this.test(title)} /> */}
                                 <input 
-                                    onBlur = {() => this.sendEditedTitleToDb(title.id)}
-                                    onChange={() => this.editTitle(title, index)} 
-                                    ref={this.inputVal} 
-                                    value={title.text} />
-                                    {(title.headers) ? 
-                                        title.headers.map(header => {
-                                            return <h1>header</h1> 
-                                        }) : null
-                                    }
+                                    onChange={(e) => this.editTitle(title, index, e)}
+                                    // onChange={() => this.editTitle(title, index)} 
+                                    // ref={this.inputVal} 
+                                    value={title.text} 
+                                />
                             </div>
                         )
                     }) : null
