@@ -71,7 +71,7 @@ input {
 button {
     border: none;
     outline: none;
-    width: 80px;
+    width: 100px;
     height: 40px; 
     /* padding: 20px; */
     /* background-color: #efefef; */
@@ -81,13 +81,22 @@ button {
 }
 
 .addNoteBtn {
-    color: #4271ae;
-    border: 2px solid #4271ae;
-    /* color: #ffffff; */
+    background-color: #4271ae;
+    color: white;
+}
+
+.addNoteBtn:hover {
+    cursor: pointer;
+    background-color: #5a88c4;
+}
+
+.addTitleBtn:hover {
+    cursor: pointer;
+    background-color: #ae80ce;
 }
 
 .addTitleBtn {
-    color: #8959a8;
-    border: 2px solid #8959a8;
+    background-color: #a072bf;
+    color: white;
     /* color: #ffffff; */
 }
