@@ -151,21 +151,39 @@ class Main extends Component {
         .then(() => {
             newTitleElem.onblur = ((e) => this.sendEditedTitleToDb(newTitleId, e))
         })
-        
-
-        
     }
 
+    createNewHeader() {
+        var newHeaderElem;
+        var newHeaderId;
+        var titleToAddTo
+        var data = { 
+            text: 'new data',
+            title: { id: 0 }
+        }
 
-        // var data = { text: e.target.value}
-        // var objToSend = JSON.stringify(data);
+        axios.get(`http://localhost:8082/titles/`)
+        .then(res => {
+            data.title.id = res.data[res.data.length - 1].id
+            console.log(data)
+        })
+        .then(() => {
+            var objToSend = JSON.stringify(data);
+            axios.post(`http://localhost:8082/headers/`, objToSend, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+        })
+         .then(res => console.log(res))
 
 
 
-    // createNewHeader() { 
-    //     var lastTitle = document.getElementsByClassName("title")[document.getElementsByClassName("title").length-1]
-    //     console.log(document.getElementsByClassName("title"))
-    // }
+        // axios.get(`http://localhost:8082/headers/`)
+        // .then(res => console.log(res))
+
+  
+    }
 
     render() {
         return (
@@ -176,7 +194,7 @@ class Main extends Component {
 
                 <div className="bodyDisplay">
                 <button onClick={this.createNewTitle.bind(this)} className="addNoteBtn">add note</button>
-                {/* <button onClick={this.createNewHeader.bind(this)} className="addTitleBtn">add header</button> */}
+                <button onClick={this.createNewHeader.bind(this)} className="addTitleBtn">add header</button>
                 { (this.state.notes) ? 
                     this.state.notes.map((title,titleIndex) => {
                         
