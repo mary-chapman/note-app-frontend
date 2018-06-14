@@ -89,16 +89,7 @@ class Main extends Component {
         }
     }
     sendEditedParaToDb(paraId, e) {
-        var data = { text: e.target.value}
-        var objToSend = JSON.stringify(data);
-        axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-    }
-    sendEditedParaToDb(paraId, e) {
-        if (e.target.value) {
+        if (paraId) {
             var data = { text: e.target.value}
             var objToSend = JSON.stringify(data);
             axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
@@ -106,7 +97,7 @@ class Main extends Component {
                     'Content-Type': 'application/json',
                 },
             })
-        }
+        } 
     }
 
     // CREATE elements
@@ -158,9 +149,11 @@ class Main extends Component {
     createNewHeader() {
         var newHeaderElem;
         var newHeaderId;
-        var titleToAddTo
+        var titleToAddTo;
+        var indexOfNoteToChange;
+        var indexToAddHeader;
         var data = { 
-            text: 'pink',
+            text: '',
             title: { id: 0 }
         }
 
@@ -180,18 +173,48 @@ class Main extends Component {
                 newHeaderId = res.data.id;
 
                 var stateCopy = {...this.state.notes}
-                var indexOfNoteToChange = this.state.notes.length - 1
-                var indexToAddHeader = this.state.notes[indexOfNoteToChange].headers.length
-                stateCopy[indexOfNoteToChange].headers[indexToAddHeader] = data
-                this.setState({stateCopy})
+                indexOfNoteToChange = this.state.notes.length - 1
+
+                if (this.state.notes[indexOfNoteToChange].headers) {
+                    indexToAddHeader = this.state.notes[indexOfNoteToChange].headers.length
+                    stateCopy[indexOfNoteToChange].headers[indexToAddHeader] = data
+                    this.setState({stateCopy})
+                } else {
+                    // console.log(stateCopy[indexOfNoteToChange])
+                    stateCopy[indexOfNoteToChange].headers = [data]
+                    this.setState({stateCopy})
+                    
+                }
             })
             .then(() => {
                 newHeaderElem = document.getElementsByClassName("header")[document.getElementsByClassName("header").length -1]
                 newHeaderElem.focus()
+                
             })
-            .then(() => {
-                newHeaderElem.onblur = ((e) => this.sendEditedHeaderToDb(newHeaderId, e))
-            })
+            .then(() => newHeaderElem.onblur = ((e) => {
+                this.sendEditedHeaderToDb(newHeaderId, e)
+                console.log(this.state.notes)
+            }))
+            .then(() => newHeaderElem.onblur = ((e) => {
+                var stateCopy = {...this.state.notes}
+
+                stateCopy[indexOfNoteToChange].headers[indexToAddHeader].paras = [ { text: 'new para', header: {id: newHeaderId} }]
+                this.setState({ stateCopy })
+
+                console.log(JSON.stringify({ text: 'new para', header: {id: newHeaderId} }))
+                var paraData = { 
+                    text: 'new para',
+                    header: { id: newHeaderId }
+                }
+                var paraToSend = JSON.stringify(paraData);
+                axios.post(`http://localhost:8082/paras/`, paraToSend, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+
+                document.getElementsByClassName("para")[document.getElementsByClassName("para").length -1].focus();
+            }))
 
         })
    
