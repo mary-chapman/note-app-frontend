@@ -78,13 +78,15 @@ class Main extends Component {
 
     }
     sendEditedHeaderToDb(headerId, e) {
-        var data = { text: e.target.value}
-        var objToSend = JSON.stringify(data);
-        axios.patch(`http://localhost:8082/headers/${headerId}`, objToSend, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+        if (headerId) {
+            var data = { text: e.target.value}
+            var objToSend = JSON.stringify(data);
+            axios.patch(`http://localhost:8082/headers/${headerId}`, objToSend, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+        }
     }
     sendEditedParaToDb(paraId, e) {
         var data = { text: e.target.value}
@@ -174,17 +176,22 @@ class Main extends Component {
                     'Content-Type': 'application/json',
                 },
             })
-            // .then(res => newHeaderId = res.data.id)
-            // .then(() => console.log(this.state.notes))
             .then(res => {
+                newHeaderId = res.data.id;
+
                 var stateCopy = {...this.state.notes}
-                // stateCopy[3].headers[10] = data;
                 var indexOfNoteToChange = this.state.notes.length - 1
                 var indexToAddHeader = this.state.notes[indexOfNoteToChange].headers.length
                 stateCopy[indexOfNoteToChange].headers[indexToAddHeader] = data
                 this.setState({stateCopy})
             })
-            .then(() => console.log(this.state.notes))
+            .then(() => {
+                newHeaderElem = document.getElementsByClassName("header")[document.getElementsByClassName("header").length -1]
+                newHeaderElem.focus()
+            })
+            .then(() => {
+                newHeaderElem.onblur = ((e) => this.sendEditedHeaderToDb(newHeaderId, e))
+            })
 
         })
    
