@@ -158,14 +158,14 @@ class Main extends Component {
         var newHeaderId;
         var titleToAddTo
         var data = { 
-            text: 'new data',
+            text: 'pink',
             title: { id: 0 }
         }
 
         axios.get(`http://localhost:8082/titles/`)
         .then(res => {
             data.title.id = res.data[res.data.length - 1].id
-            console.log(data)
+            // console.log(data)
         })
         .then(() => {
             var objToSend = JSON.stringify(data);
@@ -174,14 +174,20 @@ class Main extends Component {
                     'Content-Type': 'application/json',
                 },
             })
+            // .then(res => newHeaderId = res.data.id)
+            // .then(() => console.log(this.state.notes))
+            .then(res => {
+                var stateCopy = {...this.state.notes}
+                // stateCopy[3].headers[10] = data;
+                var indexOfNoteToChange = this.state.notes.length - 1
+                var indexToAddHeader = this.state.notes[indexOfNoteToChange].headers.length
+                stateCopy[indexOfNoteToChange].headers[indexToAddHeader] = data
+                this.setState({stateCopy})
+            })
+            .then(() => console.log(this.state.notes))
+
         })
-         .then(res => console.log(res))
-
-
-
-        // axios.get(`http://localhost:8082/headers/`)
-        // .then(res => console.log(res))
-
+   
   
     }
 
