@@ -18,20 +18,14 @@ class Main extends Component {
             readMode: true,
             editTitle: false,
             currentCursorLocation: 0
-
         }
 
         this.inputVal = React.createRef();
-        
-        this.addNote = this.addNote.bind(this);
         this.editTitle = this.editTitle.bind(this);
         this.editHeader = this.editHeader.bind(this);
         this.editPara = this.editPara.bind(this);
         this.getcurrentCursorLocation = this.getcurrentCursorLocation.bind(this);
-        // this.createNewPara = this.createNewPara.bind(this);
-
         this.sendEditedHeaderToDb = this.sendEditedHeaderToDb.bind(this);
-        // this.test = this.test.bind(this);
 
     }
 
@@ -41,54 +35,26 @@ class Main extends Component {
         axios.get('http://localhost:8082/titles')
             //***** temporarily hardcoded - change later *****
             .then(res => res.data.filter(i => i.userId === 1))
-            //.then(res => console.log(res[0]))
             .then(res => res.map(i =>{
                 this.setState({
                      notes: [...this.state.notes, i]
                 })
             }))
     }
-
-    // addNote() {
-    //     console.log()
-    //     var data = {
-    //         userId: 1,
-    //         text: document.getElementById("new").value
-    //     }
-    //     axios.post('http://localhost:8082/titles', data, {
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //     })
-    //     .then(req => this.setState({ 
-    //         notes: [ ...this.state.notes, req.data ]
-    //     }))
-    // }
-
     getcurrentCursorLocation(titleIndex, headerIndex, paraIndex) {
-        // Array.prototype.slice.call(arguments).map(i => console.log(i))
         console.log(titleIndex + " "  + headerIndex + " " + paraIndex)
-
-        
     }
-
-    // deleteTitle(title) {
-    //     console.log(this.state.notes.text)
-    //     this.setState({ notes: this.state.notes.filter(text => text.id != title.id) })
-    // }
-
+    // edit elements
     editTitle(title, index, e) {
         var stateCopy = [...this.state.notes]; // create copy of state
         stateCopy[index].text = e.target.value; //new value
         this.setState({ stateCopy }) // update the state with the new value   
     }
-
     editHeader(header, currTitleIndex, currHeaderIndex, e) {
         var stateCopy = [...this.state.notes]; // create copy of state
         stateCopy[currTitleIndex].headers[currHeaderIndex].text = e.target.value; //new value
         this.setState({ stateCopy }) // update the state with the new value
     }
-
     editPara(para, currTitleIndex, currHeaderIndex, currParaIndex, e) {
         console.log(this.state.notes[currTitleIndex].headers[currHeaderIndex].paras[currParaIndex])
         var stateCopy = [...this.state.notes]; // create copy of state
@@ -97,15 +63,20 @@ class Main extends Component {
     }
 
     sendEditedTitleToDb(title, e) {
-        var data = { text: e.target.value}
-        var objToSend = JSON.stringify(data);
-        axios.patch(`http://localhost:8082/titles/${title}`, objToSend, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-    }
 
+        if (title) {
+            var data = { 
+                text: e.target.value
+            }
+            var objToSend = JSON.stringify(data);
+            axios.patch(`http://localhost:8082/titles/${title}`, objToSend, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+        }
+
+    }
     sendEditedHeaderToDb(headerId, e) {
         var data = { text: e.target.value}
         var objToSend = JSON.stringify(data);
@@ -115,9 +86,30 @@ class Main extends Component {
             },
         })
     }
+    sendEditedParaToDb(paraId, e) {
+        var data = { text: e.target.value}
+        var objToSend = JSON.stringify(data);
+        axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+    sendEditedParaToDb(paraId, e) {
+        if (e.target.value) {
+            var data = { text: e.target.value}
+            var objToSend = JSON.stringify(data);
+            axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+        }
+    }
 
+    // CREATE elements
     createNewPara(headerId, e) {
-        console.log(headerId)
+
         var data = { 
             text: e.target.value,
             header: { id: headerId }
@@ -130,74 +122,52 @@ class Main extends Component {
         })
     }
 
-    // createNewTitle(headerId, e) {
-    //     console.log(headerId)
-    //     var data = { 
-    //         text: e.target.value,
-    //         header: { id: headerId }
-    //     }
-    //     var objToSend = JSON.stringify(data);
-    //     axios.post(`http://localhost:8082/paras/`, objToSend, {
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //     })
-    // }
 
 
-    sendEditedParaToDb(paraId, e) {
-        var data = { text: e.target.value}
+    createNewTitle() {
+        var newTitleElem;
+        var newTitleId;
+        
+        var data = { 
+            text: '',
+            userId: 1
+        }
         var objToSend = JSON.stringify(data);
-        axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
+        axios.post(`http://localhost:8082/titles/`, data, {
             headers: {
                 'Content-Type': 'application/json',
             },
         })
-    }
-
-    sendEditedParaToDb(paraId, e) {
-        if (e.target.value) {
-            var data = { text: e.target.value}
-            var objToSend = JSON.stringify(data);
-            axios.patch(`http://localhost:8082/paras/${paraId}`, objToSend, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+        .then(res => newTitleId = res.data.id)
+        .then(res => {
+            this.setState({
+                 notes: [...this.state.notes, data]
             })
-        }
-
-    }
-
-    addHeader() {
-
-    }
-
-    addNote() {
-        console.log(this.state.currentCursorLocation);
-        var lastNote = document.getElementsByClassName("title")[document.getElementsByClassName("title").length - 1];
-        var parentNode = document.getElementsByClassName("title")[document.getElementsByClassName("title").length - 2]
-        //element.parentNode.insertBefore(newElement, element);
-
-        var newElement = 
-            `<input 
-                onFocus={() => this.getcurrentCursorLocation}
-                className="title"
-                onChange={(e) => this.editTitle(title, titleIndex, e)}
-                onBlur = {(e) => this.sendEditedTitleToDb(title.id, e)}
-                value="NEW"  />`
-        console.log(lastNote)
-        //lastNote.appendChild(newElement);
+        })
+        .then(() => {
+            newTitleElem = document.getElementsByClassName("title")[document.getElementsByClassName("title").length -1]
+            newTitleElem.focus()
+        })
+        .then(() => {
+            newTitleElem.onblur = ((e) => this.sendEditedTitleToDb(newTitleId, e))
+        })
         
 
-        //console.log(titles)
-
- 
-
+        
     }
 
+
+        // var data = { text: e.target.value}
+        // var objToSend = JSON.stringify(data);
+
+
+
+    // createNewHeader() { 
+    //     var lastTitle = document.getElementsByClassName("title")[document.getElementsByClassName("title").length-1]
+    //     console.log(document.getElementsByClassName("title"))
+    // }
+
     render() {
-
-
         return (
             <div className="main">
                 <div className="headerDisplay">
@@ -205,8 +175,8 @@ class Main extends Component {
                 </div>
 
                 <div className="bodyDisplay">
-                <button onClick={this.addNote.bind(this)} className="addNoteBtn">add note</button>
-                <button onClick={this.addHeader.bind(this)} className="addTitleBtn">add header</button>
+                <button onClick={this.createNewTitle.bind(this)} className="addNoteBtn">add note</button>
+                {/* <button onClick={this.createNewHeader.bind(this)} className="addTitleBtn">add header</button> */}
                 { (this.state.notes) ? 
                     this.state.notes.map((title,titleIndex) => {
                         
@@ -230,8 +200,6 @@ class Main extends Component {
                                                     value={header.text} />
                                                         { (header.paras) ? 
                                                             header.paras.map((para, paraIndex) => {
-                                                                console.log(para.innerHTML);
-
                                                                 return (
                                                                     <div key={paraIndex} >
                                                                         <Textarea 
@@ -241,6 +209,22 @@ class Main extends Component {
                                                                             onChange={(e) => this.editPara(para, titleIndex, headerIndex, paraIndex, e)}
                                                                             onBlur = {(e) => this.sendEditedParaToDb(para.id, e)}
                                                                             value={para.text} 
+                                                                        />
+                                                                    </div> ) 
+                                                            
+                                                        }) : null }
+
+                                                         { (header.codeblocks) ? 
+                                                            header.codeblocks.map((codeblock, codeblockIndex) => {
+                                                                return (
+                                                                    <div key={codeblockIndex} >
+                                                                        <Textarea 
+                                                                            // onFocus={() => this.getcurrentCursorLocation(para.orderIndex,header.orderIndex,title.orderIndex )}
+                                                                            style={{ resize: "none" }}
+                                                                            className="codeblock"
+                                                                            // onChange={(e) => this.editPara(para, titleIndex, headerIndex, paraIndex, e)}
+                                                                            // onBlur = {(e) => this.sendEditedParaToDb(para.id, e)}
+                                                                            value={codeblock.text} 
                                                                         />
                                                                     </div> ) 
                                                             
