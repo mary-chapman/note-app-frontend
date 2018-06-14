@@ -160,7 +160,6 @@ class Main extends Component {
         axios.get(`http://localhost:8082/titles/`)
         .then(res => {
             data.title.id = res.data[res.data.length - 1].id
-            // console.log(data)
         })
         .then(() => {
             var objToSend = JSON.stringify(data);
@@ -183,42 +182,20 @@ class Main extends Component {
                     // console.log(stateCopy[indexOfNoteToChange])
                     stateCopy[indexOfNoteToChange].headers = [data]
                     this.setState({stateCopy})
-                    
                 }
             })
             .then(() => {
                 newHeaderElem = document.getElementsByClassName("header")[document.getElementsByClassName("header").length -1]
                 newHeaderElem.focus()
-                
+                //newHeaderElem.onBlur = ((e) => console.log("test"))
             })
-            .then(() => newHeaderElem.onblur = ((e) => {
-                this.sendEditedHeaderToDb(newHeaderId, e)
-                console.log(this.state.notes)
-            }))
-            .then(() => newHeaderElem.onblur = ((e) => {
-                var stateCopy = {...this.state.notes}
-
-                stateCopy[indexOfNoteToChange].headers[indexToAddHeader].paras = [ { text: 'new para', header: {id: newHeaderId} }]
-                this.setState({ stateCopy })
-
-                console.log(JSON.stringify({ text: 'new para', header: {id: newHeaderId} }))
-                var paraData = { 
-                    text: 'new para',
-                    header: { id: newHeaderId }
-                }
-                var paraToSend = JSON.stringify(paraData);
-                axios.post(`http://localhost:8082/paras/`, paraToSend, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+            .then(() => {
+                newHeaderElem.onblur = ((e) => {
+                    this.sendEditedHeaderToDb(newHeaderId, e)
+                    this.createNewPara(newHeaderId, e)
                 })
-
-                document.getElementsByClassName("para")[document.getElementsByClassName("para").length -1].focus();
-            }))
-
+            })
         })
-   
-  
     }
 
     render() {
@@ -298,8 +275,6 @@ class Main extends Component {
         )
     }
 }
-
-
 
 export default Main;
 

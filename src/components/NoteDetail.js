@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Textarea from "react-textarea-autosize";
 
 import './NoteDetail.css'
 
@@ -8,81 +9,75 @@ class NoteDetail extends Component {
         super(props);
 
         this.state = {
-            readMode: true
+            noteDetail: '',
+            titleId: this.props.location.state.foo
         }
 
-        this.readMode = this.readMode.bind(this);
-        this.writeMode = this.writeMode.bind(this);
-        this.addHeader = this.addHeader.bind(this);
-        // this.handleParaEdit = this.handleParaEdit.bind(this);
-
-
     }
-    addHeader() {
-        console.log("ADD")
-        return <textbox />
+    componentWillMount() {
+        axios.get(`http://localhost:8082/titles/${this.state.titleId}`)
+        .then(res => res.data.headers.map(i => {
+            this.setState({
+                noteDetail: [...this.state.noteDetail, i]
+            })
+        }))
+        .then(() => console.log(this.state.noteDetail))
+    }
+    editHeader = (data, e) => {
+            // update state
+            var noteId = this.state.noteDetail.findIndex(i => i.text === data) // find the index of the header in the state
+            var stateCopy = [...this.state.noteDetail]; // create copy of state
+            stateCopy[noteId].text = e.target.value; //new value
+            this.setState({ stateCopy }, console.log(this.state.noteDetail)) // update the state with the new value   
     }
 
-    readMode() {
-        return (
-            <div className="readMode">
-                { (this.props.headers) ? 
-                        this.props.headers.map((header) => {
-                            return (
-                                <div key={header.id}>
-                                    <h3>{header.text}</h3> 
-                                    { (header.paras.length > 0) ?
-                                        header.paras.map(para => {
-                                            return <p key={para.id}>{para.text}</p>
-                                        }) : null }
-                                    { (header.codeblocks.length > 0) ?
-                                        header.codeblocks.map(codeblock => {
-                                            return <p className="code" key={codeblock.id}>{codeblock.text}</p>
-                                        }) : null }
-                                </div>
-                            )
-                        }) : null }
-            </div>
-        )
-    }
-    writeMode() {
-        return (
-            <div className="readMode">
-                { (this.props.headers) ? 
-                        this.props.headers.map((header) => {
-                            return (
-                                <div key={header.id}>
-                                    <input value={header.text} />
-                                    { (header.paras.length > 0) ?
-                                        header.paras.map(para => {
-                                            return <input key={para.id} value={para.text}  />
-                                        }) : null }
-                                    { (header.codeblocks.length > 0) ?
-                                        header.codeblocks.map(codeblock => {
-                                            return <input className="code" key={codeblock.id} value={codeblock.text} />
-                                        }) : null }
-                                </div>
-                            )
-                        }) : null }
-            </div>
-        )
+    sendHeaderToDb = (id, e) => {
+        var dataObj = { 
+            text: e.target.value
+        }
+        var jsonToSend = JSON.stringify(dataObj);
+        axios.patch(`http://localhost:8082/headers/${id}`, jsonToSend, {
+            headers: { 'Content-Type': 'application/json' },
+        })
     }
     render() {
         return (
             <div className="noteDetail">
-                <button onClick={() => this.setState({ readMode: false })}>edit</button>
-                <button onClick={() => this.setState({ readMode: true })}>save</button>
-                <br />
-                <button onClick={this.addHeader}>ADD HEADER</button>
-                <button>ADD PARA</button>
-                <button>ADD CODE</button>
+                <h1>note detail</h1>
+                { (this.state.noteDetail) ?
+                    this.state.noteDetail.map(data => {
 
-                { (this.state.readMode) ? 
-                    this.readMode() : this.writeMode()
-                }
-                
+
+                    return ( 
+                        <div key={data.id}>
+                            <input 
+                                onChange={(e) => this.editHeader(data.text, e)}
+                                onBlur = {(e) => this.sendHeaderToDb(data.id, e)}
+                                value= {data.text} 
+                            />
+                            { (data.paras) ? 
+                                data.paras.map(para => {
+
+
+                                    return (
+                                        <Textarea 
+                                            key = {para.id}
+                                            style={{ resize: "none" }}
+                                            className="para"
+                                            value={para.text}
+                                        >
+                                        </Textarea>
+                                    )
+                            }) : null }
+
+
+                            {/* { (data.codeblocks) ?
+                            
+                            } */}
+                        </div> 
+                )}) : null } 
             </div>
-        );
+        )
     }
 }
 

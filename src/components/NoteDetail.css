@@ -11,4 +11,20 @@ input {
     display: block;
     margin-right: auto;
     margin-left: auto;
+    border-width:0px;
+    border:none;
+    width: 75%;
+    font-size: 16pt;
 }
+
+.para {
+    resize: none;
+    border-width:0px;
+    border:none;
+    width: 75%;
+    overflow: visible;
+    resize: none;
+    resize: both; 
+    /* background-color: #d3dae5; */
+}
+
