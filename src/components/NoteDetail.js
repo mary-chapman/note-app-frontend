@@ -46,7 +46,7 @@ class NoteDetail extends Component {
                 this.setState({ stateCopy },() => {console.log(this.state.noteDetail)}) // update the state with the new value
             }
     }
-    sendHeaderToDb = (id, e) => {
+    sendHeaderToDb = (headerIndex, id, e) => {
         console.log(id)
         //console.log(this.state.noteDetail[headerIndex].paras)
         var dataObj = { text: e.target.value }
