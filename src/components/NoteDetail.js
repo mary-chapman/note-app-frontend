@@ -32,13 +32,9 @@ class NoteDetail extends Component {
     editHeader = (data, index, e) => {
             var stateCopy = [...this.state.noteDetail]; // create copy of state
             stateCopy[index].text = e.target.value; //new value
-            //stateCopy = stateCopy.sort((a, b) => a.id - b.id);
-
             this.setState({ stateCopy}) // update the state with the new value  
     }
     editPara = (paraId, headerIndex, paraIndex, e) => {
-            console.log("id " + paraIndex)
-            //console.log(this.state.noteDetail[headerIndex].paras[paraIndex].id)
             if (paraIndex) {
                 var stateCopy = [...this.state.noteDetail]; // create copy of state
                 stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
@@ -50,22 +46,16 @@ class NoteDetail extends Component {
             }
     }
     sendHeaderToDb = (headerIndex, id, e) => {
-        console.log(id)
-        //console.log(this.state.noteDetail[headerIndex].paras)
         var dataObj = { text: e.target.value }
         var jsonToSend = JSON.stringify(dataObj);
-
         axios.patch(`http://localhost:8080/headers/${id}`, jsonToSend, {
             headers: { 'Content-Type': 'application/json' },
         }) 
     }
     sendParasToDb = (headerIndex, id, e) => {
-        console.log("sending")
-        console.log(this.state.noteDetail)
         if (id) {
             var dataObj = { text: e.target.value  }
             var jsonToSend = JSON.stringify(dataObj);
-
             axios.patch(`http://localhost:8080/paras/${id}`, jsonToSend, {
                 headers: { 'Content-Type': 'application/json' },
             })
@@ -143,20 +133,41 @@ class NoteDetail extends Component {
         }
     }
     deleteNote = () => {
-        console.log("delete")
-        console.log(this.state.titleId)
         axios.delete(`http://localhost:8080/titles/${this.state.titleId}`)
         .then(res => this.props.history.push('/notes'))
 
     }
+    createPara(textToInsert, headerId, paraIndex = 0) {
+        console.log("X")
+        var dataObj = {
+            text: textToInsert,
+            header: { id: headerId }
+        } 
+        var jsonObj = JSON.stringify(dataObj);
+        axios.post(`http://localhost:8080/paras`, jsonObj, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+        var stateCopy = [...this.state.noteDetail]; // create copy of state
+        console.log(stateCopy[headerId].paras)
+        if (stateCopy[headerId].paras.length > 0) {
+            stateCopy[headerId].paras[paraIndex].text = textToInsert; //new value
+        } else {
+            stateCopy[headerId].paras = [{ text: textToInsert}];
+        }
+        this.setState({ stateCopy }, () => {
+            console.log(document.getElementsByClassName("para")[paraIndex].focus())
+            //document.getElementsByClassName("paras")[paraIndex - 1].focus();        
+        }) // update the state with the new value
 
+    }
     render() {
         return (
             <div className="noteDetail">
                 <h1>note detail</h1>
                 <button onClick={(e) => this.createNewHeader(this.state.noteDetail.length - 1, e, 'lastInput')}>add header</button>
                 <button onClick={() => this.deleteNote()}>delete note</button>
-
+                <button onClick={() => this.createPara('hello', 1)}>create para test</button>
+                
                 { (this.state.noteDetail) ?
                     this.state.noteDetail.sort((a, b) => a.orderIndex - b.orderIndex).map((data, headerIndex) => {
                     return ( 
