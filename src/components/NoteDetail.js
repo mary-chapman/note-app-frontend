@@ -11,7 +11,8 @@ class NoteDetail extends Component {
         this.state = {
             noteDetail: '',
             titleId: this.props.location.state.foo,
-            tempInput: ''
+            tempInput: '',
+            currHeader: null
         }
 
     }
@@ -60,27 +61,9 @@ class NoteDetail extends Component {
             })
         }
     }
-    createNewPara = (e, headerIndex) => {
-        console.log(this.state.titleId )
-        // var newParaObj = {
-        //     text: "html stands for hypertext mFDASDFASFarkup language!",
-        //         header: {
-        //             id: 1,
-        //             title: {
-        //                 id: 14,
-        //             }
-        //         }
-        //     }
-        // var newParaJSON = JSON.stringify(newParaObj);
-        // console.log(newParaJSON)
-        // axios.post(`http://localhost:8080/paras`, newParaJSON, {
-        //     headers: { 'Content-Type': 'application/json' },
-        // })
-        // .then(res => console.log(res))
-    }
     createNewHeader = (id, e) => {
-        console.log(id)
-        console.log(e.target.value)
+        //console.log(id)
+        //console.log(e.target.value)
         var headerObj = {
             text: e.target.value,
             title: { id: this.state.titleId}
@@ -89,7 +72,37 @@ class NoteDetail extends Component {
         axios.post(`http://localhost:8080/headers`, jsonObj, {
             headers: { 'Content-Type': 'application/json' },
         })
-        .then(res => console.log(res))
+        // .then(res => this.setState({ currHeader: res.data.id }))
+        .then(res => {
+            // axios.get(`http://localhost:8080/headers`)
+            // .then(res => console.log(res))
+            var paraObj = {
+                text: 'NEW PARA',
+                header: { id: res.data.id }
+            }
+            var jsonPara = JSON.stringify(paraObj)
+            console.log(jsonPara)
+            axios.post(`http://localhost:8080/paras`, jsonPara, {
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then((res) => console.log(res))
+            .catch(err => console.log(err))
+        })
+        // 
+
+        // UPDATE STATE WITH RES.DATA
+    }
+    createNewPara = (headerId) => {
+        console.log("test")
+        // var dataObj = {
+        //     text: 'NEW PARA',
+        //     header: {id: this.state.currHeader}
+        // }
+        // var jsonObj = JSON.stringify(dataObj)
+        // console.log(jsonObj)
+        // // axios.post(`http://localhost:8080/paras`, jsonObj, {
+        // //     headers: { 'Content-Type': 'application/json' },
+        // // })
     }
     render() {
         return (
@@ -135,7 +148,7 @@ class NoteDetail extends Component {
                     
                     onChange={(e) => this.setState({  tempInput:  e.target.value })}
                     // onChange={(e) => this.editHeader(data.text, headerIndex, e)}
-                    onBlur = {(e) => this.createNewHeader(this.state.titleId, e)}
+                    onBlur = {(e) => {this.createNewHeader(this.state.titleId, e); this.createNewPara(1, e)} }
                     value={this.state.tempInput} 
                 />
                 //     <Textarea
