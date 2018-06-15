@@ -16,6 +16,8 @@ class NoteDetail extends Component {
             currHeader: null
         }
 
+        this.headerRef = React.createRef();
+
     }
     componentWillMount() {
         axios.get(`http://localhost:8080/titles/${this.state.titleId}`)
@@ -75,9 +77,9 @@ class NoteDetail extends Component {
         //console.log(id)
         //console.log(e.target.value)
         var className = paraClassName;
-        var headerVal = e.target.value;
+        var headerVal = () => e.target.value || 'test';
         var headerObj = {
-            text: e.target.value,
+            text: headerVal,
             title: { id: this.state.titleId}
         }
         var jsonObj = JSON.stringify(headerObj)
@@ -88,7 +90,7 @@ class NoteDetail extends Component {
         .then(res => {
             var headerId = res.data.id;
             var paraObj = {
-                text: 'x',
+                text: '',
                 header: { id: res.data.id }
             }
             var jsonPara = JSON.stringify(paraObj)
@@ -105,54 +107,65 @@ class NoteDetail extends Component {
         })
     }
 
-    createNewPara = (headerIndex, headerId, e) => {
-        var paraId;
-        var inputVal = e.target.value
-        var paraObj = {
-
-            text: e.target.value,
-            header: { id: headerId}
+    createNewHeader = (headerIndex, e, paraClassName) => {
+        var className = paraClassName;
+        var headerVal = e.target.value;
+        var headerObj = {
+            text: headerVal,
+            title: { id: this.state.titleId}
         }
-
-        
-        var jsonPara = JSON.stringify(paraObj)
-        axios.post(`http://localhost:8080/paras`, jsonPara, {
+        var jsonObj = JSON.stringify(headerObj)
+        axios.post(`http://localhost:8080/headers`, jsonObj, {
             headers: { 'Content-Type': 'application/json' },
         })
-        .then(() => {
-            axios.get(`http://localhost:8080/paras`).then(res => {
-                //console.log(res.data[res.data.length - 1].id)
-                paraId = res.data[res.data.length - 1].id
+        // .then(res => this.setState({ currHeader: res.data.id }))
+        .then(res => {
+            var headerId = res.data.id;
+            var paraObj = {
+                text: '',
+                header: { id: res.data.id }
+            }
+            var jsonPara = JSON.stringify(paraObj)
+            axios.post(`http://localhost:8080/paras`, jsonPara, {
+                headers: { 'Content-Type': 'application/json' },
             })
             .then((res) => {
-                //console.log(res)
-                var stateCopy = [...this.state.noteDetail]; // create copy of state
-                stateCopy[headerIndex].paras = [{text: inputVal, id: paraId}]
-                this.setState({ stateCopy }) // update the state with the new value
+                this.setState({
+                    noteDetail: [...this.state.noteDetail, { id: headerId, text: headerVal, paras: [{id: res.data.id}, {text: ''}]  }]
+                }, () => document.querySelectorAll('input')[this.state.noteDetail.length - 1].focus()
+                )  
             })
             .then(() => console.log(this.state.noteDetail))
+            //.then(() => document.querySelectorAll('para')[this.state.noteDetail.length - 1].focus())
         })
+    }
+    handleKeyPress = (e) => {
+        if (e.key == 'Enter') {
 
-
+            console.log(e.target.nextSibling.focus())
+        }
     }
     render() {
         return (
             <div className="noteDetail">
                 <h1>note detail</h1>
-
-                {/* {console.log(this.state.noteDetail)} */}
+                <button onClick={(e) => this.createNewHeader(this.state.noteDetail.length - 1, e, 'lastInput')}>add header</button>
 
                 { (this.state.noteDetail) ?
                     this.state.noteDetail.sort((a, b) => a.orderIndex - b.orderIndex).map((data, headerIndex) => {
                     return ( 
                         <div key={data.id}>
+                        
                             <input 
+                                ref={this.headerRef}
                                 onChange={(e) => this.editHeader(data.text, headerIndex, e)}
                                 onBlur = {(e) => this.sendHeaderToDb(headerIndex,data.id, e)}
-                                value= {data.text} />
+                                value= {this.state.noteDetail[headerIndex].text} 
+                                onKeyPress={(e) => this.handleKeyPress(e)}
+                                />
 
                             
-                            { (data.paras.length > 0) ? 
+                            { (data.paras) ? 
                                 data.paras.map((para, paraIndex) => {
                                     return (
                                         <Textarea 
@@ -181,10 +194,8 @@ class NoteDetail extends Component {
                 <input 
                     className="lastInput"
                     style={{backgroundColor: 'lightgreen'}}
-                    onChange={(e) => this.handleChange(e)}
-                    // onChange={(e) => this.editHeader(data.text, headerIndex, e)}
                     onBlur = {(e) => {this.createNewHeader(this.state.titleId, e, "lastInput")} }
-                    //value={this.state.tempInput} 
+                    // value=''
                 />
                 }
             </div>
