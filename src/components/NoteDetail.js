@@ -64,22 +64,22 @@ class NoteDetail extends Component {
         console.log(this.state.noteDetail)
         this.setState({  tempInput:  e.target.value })
     }
-    createNewPara = (headerIndex) => {
+    createNewPara = (e, headerIndex) => {
         console.log(headerIndex)
         var objToSend = {
-            text: "NEW",
+            text: this.state.tempInput,
             header: {
-                id: 1,
+                id: headerIndex + 1,
                 title: {
-                    id: 1,
+                    id: this.state.titleId + 1,
                 }
             }
         }
-        // var jsonToSend = JSON.stringify(dataObj);
-        // axios.post(`http://localhost:8080/paras/`, jsonToSend, {
-        //     headers: { 'Content-Type': 'application/json' },
-        // })
-        // .then(res => console.log(res))
+        var jsonToSend = JSON.stringify(objToSend);
+        axios.post(`http://localhost:8080/paras/`, jsonToSend, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(res => console.log(res))
     }
     render() {
         return (
@@ -110,15 +110,15 @@ class NoteDetail extends Component {
                                             value={para.text}
                                         ></Textarea>
                                     )
-                                    }) : null
-                                    // <Textarea
-                                    //     onChange={(e) => this.handleNewParaInput(e)}
-                                    //     onBlur={(e) => this.createNewPara(e, headerIndex)}
-                                    //     style={{ resize: "none" }}
-                                    //     className="para"
-                                    //     value={this.state.tempInput}
-                                    // >
-                                    // </Textarea> 
+                                    }) : 
+                                    <Textarea
+                                        onChange={(e) => this.handleNewParaInput(e)}
+                                        onBlur={(e) => this.createNewPara(e, headerIndex)}
+                                        style={{ resize: "none" }}
+                                        className="para"
+                                        value={this.state.tempInput}
+                                    >
+                                    </Textarea> 
                                     }
 
                             {/* { (data.codeblocks) ?
