@@ -33,19 +33,22 @@ class NoteDetail extends Component {
 
             this.setState({ stateCopy}) // update the state with the new value  
     }
-    editPara = (headerIndex, paraIndex, e) => {
+    editPara = (paraId, headerIndex, paraIndex, e) => {
+            console.log("id " + paraIndex)
+            //console.log(this.state.noteDetail[headerIndex].paras[paraIndex].id)
             if (paraIndex) {
                 var stateCopy = [...this.state.noteDetail]; // create copy of state
                 stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
-                this.setState({ stateCopy }) // update the state with the new value
+                this.setState({ stateCopy }, () => {console.log(this.state.noteDetail)}) // update the state with the new value
             } else {
                 var stateCopy = [...this.state.noteDetail]; // create copy of state
-                stateCopy[headerIndex].paras = [{text: e.target.value}]
-                this.setState({ stateCopy }) // update the state with the new value
+                stateCopy[headerIndex].paras = [{text: e.target.value, id: this.state.noteDetail[headerIndex].paras[paraIndex].id}]
+                this.setState({ stateCopy },() => {console.log(this.state.noteDetail)}) // update the state with the new value
             }
-
     }
     sendHeaderToDb = (id, e) => {
+        console.log(id)
+        //console.log(this.state.noteDetail[headerIndex].paras)
         var dataObj = { text: e.target.value }
         var jsonToSend = JSON.stringify(dataObj);
 
@@ -53,9 +56,9 @@ class NoteDetail extends Component {
             headers: { 'Content-Type': 'application/json' },
         }) 
     }
-    sendParasToDb = (state, id, e) => {
+    sendParasToDb = (headerIndex, id, e) => {
         console.log("sending")
-        console.log(id)
+        console.log(this.state.noteDetail)
         if (id) {
             var dataObj = { text: e.target.value  }
             var jsonToSend = JSON.stringify(dataObj);
@@ -63,7 +66,10 @@ class NoteDetail extends Component {
             axios.patch(`http://localhost:8080/paras/${id}`, jsonToSend, {
                 headers: { 'Content-Type': 'application/json' },
             })
+        } else {
+            //console.log(this.state.noteDetail)
         } 
+
     }
     createNewHeader = (headerIndex, e, paraClassName) => {
         //console.log(id)
@@ -115,18 +121,19 @@ class NoteDetail extends Component {
         })
         .then(() => {
             axios.get(`http://localhost:8080/paras`).then(res => {
-                console.log(res.data[res.data.length - 1].id)
+                //console.log(res.data[res.data.length - 1].id)
                 paraId = res.data[res.data.length - 1].id
             })
+            .then((res) => {
+                //console.log(res)
+                var stateCopy = [...this.state.noteDetail]; // create copy of state
+                stateCopy[headerIndex].paras = [{text: inputVal, id: paraId}]
+                this.setState({ stateCopy }) // update the state with the new value
+            })
+            .then(() => console.log(this.state.noteDetail))
         })
 
-        .then((res) => {
-            console.log(res)
-            var stateCopy = [...this.state.noteDetail]; // create copy of state
-            stateCopy[headerIndex].paras = [{text: inputVal, id: paraId}]
-            this.setState({ stateCopy }) // update the state with the new value
-        })
-        //.then(() => console.log(this.state.noteDetail)[0].paras.id) 
+
     }
     render() {
         return (
@@ -141,7 +148,7 @@ class NoteDetail extends Component {
                         <div key={data.id}>
                             <input 
                                 onChange={(e) => this.editHeader(data.text, headerIndex, e)}
-                                onBlur = {(e) => this.sendHeaderToDb(data.id, e)}
+                                onBlur = {(e) => this.sendHeaderToDb(headerIndex,data.id, e)}
                                 value= {data.text} />
 
                             
@@ -149,8 +156,8 @@ class NoteDetail extends Component {
                                 data.paras.map((para, paraIndex) => {
                                     return (
                                         <Textarea 
-                                            onChange={(e) => this.editPara(headerIndex, paraIndex, e)}
-                                            onBlur = {(e) => this.sendParasToDb(this.state.noteDetail[headerIndex].paras, para.id, e, data.paras)}
+                                            onChange={(e) => this.editPara(para.id, headerIndex, paraIndex, e)}
+                                            onBlur = {(e) => this.sendParasToDb(headerIndex, para.id, e)}
                                             key = {paraIndex}
                                             style={{ resize: "none" }}
                                             className="para"
