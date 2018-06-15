@@ -12,6 +12,7 @@ class NoteDetail extends Component {
             noteDetail: '',
             titleId: this.props.location.state.foo,
             tempInput: '',
+            tempParaInput: '',
             currHeader: null
         }
 
@@ -23,25 +24,25 @@ class NoteDetail extends Component {
                 noteDetail: [...this.state.noteDetail, i]
             })
         }))
-        .then(() => console.log(this.state.noteDetail))
+        // .then(() => console.log(this.state.noteDetail))
     }
     editHeader = (data, index, e) => {
             var stateCopy = [...this.state.noteDetail]; // create copy of state
             stateCopy[index].text = e.target.value; //new value
             //stateCopy = stateCopy.sort((a, b) => a.id - b.id);
 
-            this.setState({ stateCopy}, () => console.log(stateCopy)) // update the state with the new value  
+            this.setState({ stateCopy}) // update the state with the new value  
     }
     editPara = (headerIndex, paraIndex, e) => {
-            // if (paraIndex) {
+            if (paraIndex) {
                 var stateCopy = [...this.state.noteDetail]; // create copy of state
                 stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
                 this.setState({ stateCopy }) // update the state with the new value
-            // } else {
-            //     var stateCopy = [...this.state.noteDetail]; // create copy of state
-            //     stateCopy[headerIndex].paras = [{text: 'test'}]
-            //     this.setState({ stateCopy }) // update the state with the new value
-            // }
+            } else {
+                var stateCopy = [...this.state.noteDetail]; // create copy of state
+                stateCopy[headerIndex].paras = [{text: e.target.value}]
+                this.setState({ stateCopy }) // update the state with the new value
+            }
 
     }
     sendHeaderToDb = (id, e) => {
@@ -89,14 +90,36 @@ class NoteDetail extends Component {
                 this.setState({
                     noteDetail: [{ id: headerId, text: headerVal, paras: [{id: res.data.id}, {text: ''}]  }]
                 },
-                () => console.log(document.querySelectorAll('textarea')[0].focus())
-                )
-                
+                () => document.querySelectorAll('textarea')[0].focus()
+                )  
             })
-            //.then(() => console.log(document.getElementsByClassName(className)[0])
-        
-            //.then(() => document.getElementsByClassName(paraClassName)[0].focus())
         })
+    }
+    // handleChange = (e, headerIndex, data) => {
+    //     (data.paras) ? console.log("true") : console.log("false")
+    //     //console.log(this.state.noteDetail)
+ 
+    //         if (data.paras.length > 0) {
+    //             var stateCopy = [...this.state.noteDetail]; // create copy of state
+    //             stateCopy[headerIndex].paras[0].text = e.target.value; //new value
+    //             this.setState({ stateCopy }) // update the state with the new value  
+    //         } else {
+    //             var stateCopy = [...this.state.noteDetail]; // create copy of state
+    //             stateCopy[headerIndex].paras = [{ text: e.target.value} ]; //new value
+    //             this.setState({ stateCopy }) // update the state with the new value 
+    //         }
+    //     console.log(data)
+    // }
+    createNewPara = (headerId, e) => {
+        var paraObj = {
+            text: e.target.value,
+            header: { id: headerId}
+        }
+        var jsonPara = JSON.stringify(paraObj)
+        axios.post(`http://localhost:8080/paras`, jsonPara, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then((res) => console.log(res))
     }
     render() {
         return (
@@ -113,9 +136,9 @@ class NoteDetail extends Component {
                                 onChange={(e) => this.editHeader(data.text, headerIndex, e)}
                                 onBlur = {(e) => this.sendHeaderToDb(data.id, e)}
                                 value= {data.text} />
-                                {/* { console.log(data.paras.length) } */}
+
                             
-                            { (data.paras) ? 
+                            { (data.paras.length > 0) ? 
                                 data.paras.map((para, paraIndex) => {
                                     return (
                                         <Textarea 
@@ -127,9 +150,16 @@ class NoteDetail extends Component {
                                             value={para.text}
                                         ></Textarea>
                                     )
-                                    }) : null
-
-                                    }
+                                }) : 
+                                //console.log(this.state.noteDetail)
+                                <Textarea 
+                                // onChange={(e) => this.handleChange(e, headerIndex, data)}
+                                onBlur = {(e) => this.createNewPara(data.id, e)}
+                                style={{ resize: "none" }}
+                                className="para"
+                                // value=''
+                                ></Textarea>
+                                }
 
                             {/* { (data.codeblocks) ?
                                 // CODEBLOCKS
@@ -140,10 +170,10 @@ class NoteDetail extends Component {
                 <input 
                     className="lastInput"
                     style={{backgroundColor: 'lightgreen'}}
-                    onChange={(e) => this.setState({  tempInput:  e.target.value })}
+                    onChange={(e) => this.handleChange(e)}
                     // onChange={(e) => this.editHeader(data.text, headerIndex, e)}
                     onBlur = {(e) => {this.createNewHeader(this.state.titleId, e, "lastInput")} }
-                    value={this.state.tempInput} 
+                    //value={this.state.tempInput} 
                 />
                 }
             </div>
