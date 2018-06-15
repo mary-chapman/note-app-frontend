@@ -14,10 +14,11 @@ class Notes extends Component {
     }
 
     componentWillMount() {
-        axios.get('http://localhost:8082/titles')
+        axios.get('http://localhost:8080/titles')
             //***** temporarily hardcoded - change later *****
-            .then(res => res.data.filter(i => i.userId === 1))
-            .then(res => res.map(i =>{
+            // .then(res => res.data.filter(i => i.userId === 1))
+             //.then(res => console.log(res))
+            .then(res => res.data.map(i =>{
                 this.setState({
                      notes: [...this.state.notes, i]
                 })

@@ -15,62 +15,81 @@ class NoteDetail extends Component {
 
     }
     componentWillMount() {
-        axios.get(`http://localhost:8082/titles/${this.state.titleId}`)
+        axios.get(`http://localhost:8080/titles/${this.state.titleId}`)
         .then(res => res.data.headers.map(i => {
             this.setState({
                 noteDetail: [...this.state.noteDetail, i]
             })
         }))
-        .then(() => console.log(this.state.noteDetail))
     }
-    editHeader = (data, e) => {
-            // update state
-            var noteId = this.state.noteDetail.findIndex(i => i.text === data) // find the index of the header in the state
+    editHeader = (data, index, e) => {
             var stateCopy = [...this.state.noteDetail]; // create copy of state
-            stateCopy[noteId].text = e.target.value; //new value
-            this.setState({ stateCopy }, console.log(this.state.noteDetail)) // update the state with the new value   
-    }
+            stateCopy[index].text = e.target.value; //new value
+            stateCopy = stateCopy.sort((a, b) => a.id - b.id);
 
-    sendHeaderToDb = (id, e) => {
-        var dataObj = { 
-            text: e.target.value
+            this.setState({ stateCopy}, () => console.log(stateCopy)) // update the state with the new value  
+    }
+    editPara = (headerIndex, paraIndex, e) => {
+        if (paraIndex != 0) {
+            var stateCopy = [...this.state.noteDetail]; // create copy of state
+            stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
+            this.setState({ stateCopy }) // update the state with the new value
+        } else {
+            var stateCopy = [...this.state.noteDetail]; // create copy of state
+            console.log(stateCopy[headerIndex].paras[0])
+            //stateCopy[headerIndex].paras = [];
+            //stateCopy[headerIndex].paras[0].text = e.target.value; //new value
+            //this.setState({ stateCopy }) // update the state with the new value    
         }
+
+    }
+    sendHeaderToDb = (id, e) => {
+        var dataObj = { text: e.target.value }
         var jsonToSend = JSON.stringify(dataObj);
-        axios.patch(`http://localhost:8082/headers/${id}`, jsonToSend, {
+
+        axios.patch(`http://localhost:8080/headers/${id}`, jsonToSend, {
             headers: { 'Content-Type': 'application/json' },
         })
+    }
+    sendParasToDb = (id, e) => {
+        var dataObj = { text: e.target.value  }
+        var jsonToSend = JSON.stringify(dataObj);
+        axios.patch(`http://localhost:8080/paras/${id}`, jsonToSend, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+    }
+    createNewHeader(headerIndex) {
+        console.log(headerIndex)
     }
     render() {
         return (
             <div className="noteDetail">
                 <h1>note detail</h1>
+
                 { (this.state.noteDetail) ?
-                    this.state.noteDetail.map(data => {
-
-
+                    this.state.noteDetail.sort((a, b) => a.orderIndex - b.orderIndex).map((data, headerIndex) => {
                     return ( 
                         <div key={data.id}>
                             <input 
-                                onChange={(e) => this.editHeader(data.text, e)}
+                                onChange={(e) => this.editHeader(data.text, headerIndex, e)}
                                 onBlur = {(e) => this.sendHeaderToDb(data.id, e)}
-                                value= {data.text} 
-                            />
-                            { (data.paras) ? 
-                                data.paras.map(para => {
+                                value= {data.text} />
+                                {/* { console.log(data.paras.length) } */}
 
-
+                            { (data.paras.length > 0) ? 
+                                data.paras.map((para, paraIndex) => {
                                     return (
                                         <Textarea 
+                                            onChange={(e) => this.editPara(headerIndex, paraIndex, e)}
+                                            onBlur = {(e) => this.sendParasToDb(para.id, e)}
                                             key = {para.id}
                                             style={{ resize: "none" }}
                                             className="para"
                                             value={para.text}
-                                        >
-                                        </Textarea>
-                                    )
-                            }) : null }
-
-
+                                        ></Textarea>
+                                    ) }) : 
+                                    this.createNewHeader(headerIndex)
+                                 }
                             {/* { (data.codeblocks) ?
                             
                             } */}
