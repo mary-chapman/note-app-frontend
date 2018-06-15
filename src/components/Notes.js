@@ -9,7 +9,8 @@ class Notes extends Component {
         super(props);
 
         this.state = {
-            notes: []
+            notes: [],
+            input: ''
         }
     }
 
@@ -25,10 +26,37 @@ class Notes extends Component {
             }))
             .then(() => console.log(this.state.notes))
     }
+    goToInput = () => {
+        document.getElementsByClassName("newNote")[0].focus();
+    }
+    handleInput = (e) => {
+        this.setState({ input: e.target.value})
+    }
+    addNote = () => {        
+    //    this.setState({ notes: [...this.state.notes, { text: 'text', id: 1}, console.log(() => this.state.notes)] })
+        var objToSend = {
+            text: document.getElementsByClassName("newNote")[0].value
+        }
+        var jsonToSend = JSON.stringify(objToSend)
+        axios.post('http://localhost:8080/titles', jsonToSend,  {
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then((res) => {
+            notes: [...this.state.notes, res.data]
+        })
+    }
 
     render() {
         return (
             <div className="notes">
+                <button onClick={(e) => this.goToInput(e)} >
+                    add note
+                </button>
+                <input 
+                    onChange = {this.handleInput}
+
+                    className="newNote" value={this.state.input} onBlur={this.addNote} />
+
                 {this.state.notes.map((note, index) => {
                     return (
                         <div key={index}>

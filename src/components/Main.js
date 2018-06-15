@@ -69,7 +69,7 @@ class Main extends Component {
                 text: e.target.value
             }
             var objToSend = JSON.stringify(data);
-            axios.patch(`http://localhost:8082/titles/${title}`, objToSend, {
+            axios.patch(`http://localhost:8080/titles/${title}`, objToSend, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

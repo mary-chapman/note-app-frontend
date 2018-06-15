@@ -10,7 +10,8 @@ class NoteDetail extends Component {
 
         this.state = {
             noteDetail: '',
-            titleId: this.props.location.state.foo
+            titleId: this.props.location.state.foo,
+            tempInput: ''
         }
 
     }
@@ -21,18 +22,26 @@ class NoteDetail extends Component {
                 noteDetail: [...this.state.noteDetail, i]
             })
         }))
+        // .then(() => console.log(this.state.noteDetail))
     }
     editHeader = (data, index, e) => {
             var stateCopy = [...this.state.noteDetail]; // create copy of state
             stateCopy[index].text = e.target.value; //new value
-            stateCopy = stateCopy.sort((a, b) => a.id - b.id);
+            //stateCopy = stateCopy.sort((a, b) => a.id - b.id);
 
             this.setState({ stateCopy}, () => console.log(stateCopy)) // update the state with the new value  
     }
     editPara = (headerIndex, paraIndex, e) => {
-            var stateCopy = [...this.state.noteDetail]; // create copy of state
-            stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
-            this.setState({ stateCopy }) // update the state with the new value
+            // if (paraIndex) {
+                var stateCopy = [...this.state.noteDetail]; // create copy of state
+                stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
+                this.setState({ stateCopy }) // update the state with the new value
+            // } else {
+            //     var stateCopy = [...this.state.noteDetail]; // create copy of state
+            //     stateCopy[headerIndex].paras = [{text: 'test'}]
+            //     this.setState({ stateCopy }) // update the state with the new value
+            // }
+
     }
     sendHeaderToDb = (id, e) => {
         var dataObj = { text: e.target.value }
@@ -50,31 +59,34 @@ class NoteDetail extends Component {
                 headers: { 'Content-Type': 'application/json' },
             })
         }
-
     }
-    createNewPara(paraIndex, headerIndex) {
-        var dataObj = {
-            text: '',
-            orderIndex: () => (paraIndex) ? paraIndex + 1 : 0,
-            header: { id: headerIndex + 1 }
+    handleNewParaInput = (e) => {
+        console.log(this.state.noteDetail)
+        this.setState({  tempInput:  e.target.value })
+    }
+    createNewPara = (headerIndex) => {
+        console.log(headerIndex)
+        var objToSend = {
+            text: "NEW",
+            header: {
+                id: 1,
+                title: {
+                    id: 1,
+                }
+            }
         }
-        var jsonToSend = JSON.stringify(dataObj)
-        axios.post(`http://localhost:8080/paras/`, jsonToSend, {
-            headers: { 'Content-Type': 'application/json' },
-        })
-        .then(() => {
-        var stateCopy = [...this.state.noteDetail]; // create copy of state
-        stateCopy[headerIndex].paras = [{ text: ''}];
-        //stateCopy[headerIndex].paras[0].text = 'hOLA'; //new value
-        this.setState({ stateCopy }) // update the state with the new value
-        })
-
-
+        // var jsonToSend = JSON.stringify(dataObj);
+        // axios.post(`http://localhost:8080/paras/`, jsonToSend, {
+        //     headers: { 'Content-Type': 'application/json' },
+        // })
+        // .then(res => console.log(res))
     }
     render() {
         return (
             <div className="noteDetail">
                 <h1>note detail</h1>
+
+                {/* {console.log(this.state.noteDetail)} */}
 
                 { (this.state.noteDetail) ?
                     this.state.noteDetail.sort((a, b) => a.orderIndex - b.orderIndex).map((data, headerIndex) => {
@@ -98,14 +110,23 @@ class NoteDetail extends Component {
                                             value={para.text}
                                         ></Textarea>
                                     )
-                                    // {this.createNewPara(paraIndex+1, headerIndex)} 
                                     }) : null
-                                 }
+                                    // <Textarea
+                                    //     onChange={(e) => this.handleNewParaInput(e)}
+                                    //     onBlur={(e) => this.createNewPara(e, headerIndex)}
+                                    //     style={{ resize: "none" }}
+                                    //     className="para"
+                                    //     value={this.state.tempInput}
+                                    // >
+                                    // </Textarea> 
+                                    }
+
                             {/* { (data.codeblocks) ?
-                            
+                                // CODEBLOCKS
                             } */}
+
                         </div> 
-                )}) : null } 
+                )}) : null }
             </div>
         )
     }
