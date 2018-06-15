@@ -61,9 +61,11 @@ class NoteDetail extends Component {
             })
         }
     }
-    createNewHeader = (headerIndex, e) => {
+    createNewHeader = (headerIndex, e, paraClassName) => {
         //console.log(id)
         //console.log(e.target.value)
+        var className = paraClassName;
+        var headerVal = e.target.value;
         var headerObj = {
             text: e.target.value,
             title: { id: this.state.titleId}
@@ -85,9 +87,15 @@ class NoteDetail extends Component {
             })
             .then((res) => {
                 this.setState({
-                    noteDetail: [{ id: headerId, text: 'x', paras: [{id: res.data.id}, {text: 'x'}]  }]
-                })
+                    noteDetail: [{ id: headerId, text: headerVal, paras: [{id: res.data.id}, {text: ''}]  }]
+                },
+                () => console.log(document.querySelectorAll('textarea')[0].focus())
+                )
+                
             })
+            //.then(() => console.log(document.getElementsByClassName(className)[0])
+        
+            //.then(() => document.getElementsByClassName(paraClassName)[0].focus())
         })
     }
     render() {
@@ -130,23 +138,13 @@ class NoteDetail extends Component {
                         </div> 
                 )}) : 
                 <input 
-                    // key={1+=1}
+                    className="lastInput"
                     style={{backgroundColor: 'lightgreen'}}
                     onChange={(e) => this.setState({  tempInput:  e.target.value })}
                     // onChange={(e) => this.editHeader(data.text, headerIndex, e)}
-                    onBlur = {(e) => {this.createNewHeader(this.state.titleId, e)} }
+                    onBlur = {(e) => {this.createNewHeader(this.state.titleId, e, "lastInput")} }
                     value={this.state.tempInput} 
                 />
-                //     <Textarea
-                //     onChange={(e) => this.setState({  tempInput:  e.target.value })}
-                //     onBlur={(e) => this.createNewPara(e, 0)}
-                    
-                //     style={{ resize: "none", backgroundColor: "lightblue" }}
-                //     className="para"
-                //     value={this.state.tempInput}
-                // >
-                // </Textarea> 
-
                 }
             </div>
         )
