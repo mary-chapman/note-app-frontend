@@ -7,3 +7,13 @@ input {
     width: 75%;
     font-size: 16pt;
 }
+
+.notes button {
+    background-color: #4271ae;
+    color: #ffffff;
+}
+.notes button:hover {
+    cursor: pointer;
+    background-color: #5a88c4;
+    color: #ffffff;
+}
