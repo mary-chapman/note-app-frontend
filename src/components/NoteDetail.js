@@ -60,23 +60,33 @@ class NoteDetail extends Component {
             })
         }
     }
-    handleNewParaInput = (e) => {
-        console.log(this.state.noteDetail)
-        this.setState({  tempInput:  e.target.value })
-    }
     createNewPara = (e, headerIndex) => {
-        console.log(headerIndex)
-        var objToSend = {
-            text: this.state.tempInput,
-            header: {
-                id: headerIndex + 1,
-                title: {
-                    id: this.state.titleId + 1,
-                }
-            }
+        console.log(this.state.titleId )
+        // var newParaObj = {
+        //     text: "html stands for hypertext mFDASDFASFarkup language!",
+        //         header: {
+        //             id: 1,
+        //             title: {
+        //                 id: 14,
+        //             }
+        //         }
+        //     }
+        // var newParaJSON = JSON.stringify(newParaObj);
+        // console.log(newParaJSON)
+        // axios.post(`http://localhost:8080/paras`, newParaJSON, {
+        //     headers: { 'Content-Type': 'application/json' },
+        // })
+        // .then(res => console.log(res))
+    }
+    createNewHeader = (id, e) => {
+        console.log(id)
+        console.log(e.target.value)
+        var headerObj = {
+            text: e.target.value,
+            title: { id: this.state.titleId}
         }
-        var jsonToSend = JSON.stringify(objToSend);
-        axios.post(`http://localhost:8080/paras/`, jsonToSend, {
+        var jsonObj = JSON.stringify(headerObj)
+        axios.post(`http://localhost:8080/headers`, jsonObj, {
             headers: { 'Content-Type': 'application/json' },
         })
         .then(res => console.log(res))
@@ -110,15 +120,8 @@ class NoteDetail extends Component {
                                             value={para.text}
                                         ></Textarea>
                                     )
-                                    }) : 
-                                    <Textarea
-                                        onChange={(e) => this.handleNewParaInput(e)}
-                                        onBlur={(e) => this.createNewPara(e, headerIndex)}
-                                        style={{ resize: "none" }}
-                                        className="para"
-                                        value={this.state.tempInput}
-                                    >
-                                    </Textarea> 
+                                    }) : null
+
                                     }
 
                             {/* { (data.codeblocks) ?
@@ -126,7 +129,26 @@ class NoteDetail extends Component {
                             } */}
 
                         </div> 
-                )}) : null }
+                )}) : 
+                <input 
+                    style={{backgroundColor: 'lightgreen'}}
+                    
+                    onChange={(e) => this.setState({  tempInput:  e.target.value })}
+                    // onChange={(e) => this.editHeader(data.text, headerIndex, e)}
+                    onBlur = {(e) => this.createNewHeader(this.state.titleId, e)}
+                    value={this.state.tempInput} 
+                />
+                //     <Textarea
+                //     onChange={(e) => this.setState({  tempInput:  e.target.value })}
+                //     onBlur={(e) => this.createNewPara(e, 0)}
+                    
+                //     style={{ resize: "none", backgroundColor: "lightblue" }}
+                //     className="para"
+                //     value={this.state.tempInput}
+                // >
+                // </Textarea> 
+
+                }
             </div>
         )
     }
