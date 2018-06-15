@@ -58,8 +58,19 @@ class NoteDetail extends Component {
             headers: { 'Content-Type': 'application/json' },
         })
     }
-    createNewHeader(headerIndex) {
-        console.log(headerIndex)
+    createNewPara(headerIndex) {
+        var dataObj = {
+            text: 'whatever',
+            header: { id: headerIndex + 1 }
+        }
+        var jsonToSend = JSON.stringify(dataObj)
+        axios.post(`http://localhost:8080/paras/`, jsonToSend, {
+            headers: { 'Content-Type': 'application/json' },
+        })
+        var stateCopy = [...this.state.noteDetail]; // create copy of state
+        stateCopy[headerIndex].paras = [{ text: 'whatever'}];
+        //stateCopy[headerIndex].paras[0].text = 'hOLA'; //new value
+        this.setState({ stateCopy }) // update the state with the new value
     }
     render() {
         return (
@@ -88,7 +99,7 @@ class NoteDetail extends Component {
                                             value={para.text}
                                         ></Textarea>
                                     ) }) : 
-                                    this.createNewHeader(headerIndex)
+                                    this.createNewPara(headerIndex)
                                  }
                             {/* { (data.codeblocks) ?
                             
