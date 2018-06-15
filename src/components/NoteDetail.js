@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import Textarea from "react-textarea-autosize";
+import {Link, withRouter} from 'react-router-dom'
 
 import './NoteDetail.css'
 
@@ -74,8 +75,6 @@ class NoteDetail extends Component {
 
     }
     createNewHeader = (headerIndex, e, paraClassName) => {
-        //console.log(id)
-        //console.log(e.target.value)
         var className = paraClassName;
         var headerVal = () => e.target.value || 'test';
         var headerObj = {
@@ -86,7 +85,6 @@ class NoteDetail extends Component {
         axios.post(`http://localhost:8080/headers`, jsonObj, {
             headers: { 'Content-Type': 'application/json' },
         })
-        // .then(res => this.setState({ currHeader: res.data.id }))
         .then(res => {
             var headerId = res.data.id;
             var paraObj = {
@@ -141,15 +139,23 @@ class NoteDetail extends Component {
     }
     handleKeyPress = (e) => {
         if (e.key == 'Enter') {
-
-            console.log(e.target.nextSibling.focus())
+            if (e.target.nextSibling) { e.target.nextSibling.focus() }
         }
     }
+    deleteNote = () => {
+        console.log("delete")
+        console.log(this.state.titleId)
+        axios.delete(`http://localhost:8080/titles/${this.state.titleId}`)
+        .then(res => this.props.history.push('/notes'))
+
+    }
+
     render() {
         return (
             <div className="noteDetail">
                 <h1>note detail</h1>
                 <button onClick={(e) => this.createNewHeader(this.state.noteDetail.length - 1, e, 'lastInput')}>add header</button>
+                <button onClick={() => this.deleteNote()}>delete note</button>
 
                 { (this.state.noteDetail) ?
                     this.state.noteDetail.sort((a, b) => a.orderIndex - b.orderIndex).map((data, headerIndex) => {
@@ -195,7 +201,7 @@ class NoteDetail extends Component {
                     className="lastInput"
                     style={{backgroundColor: 'lightgreen'}}
                     onBlur = {(e) => {this.createNewHeader(this.state.titleId, e, "lastInput")} }
-                    // value=''
+                    onKeyPress={(e) => this.handleKeyPress(e)}
                 />
                 }
             </div>
