@@ -30,18 +30,9 @@ class NoteDetail extends Component {
             this.setState({ stateCopy}, () => console.log(stateCopy)) // update the state with the new value  
     }
     editPara = (headerIndex, paraIndex, e) => {
-        if (paraIndex != 0) {
             var stateCopy = [...this.state.noteDetail]; // create copy of state
             stateCopy[headerIndex].paras[paraIndex].text = e.target.value; //new value
             this.setState({ stateCopy }) // update the state with the new value
-        } else {
-            var stateCopy = [...this.state.noteDetail]; // create copy of state
-            console.log(stateCopy[headerIndex].paras[0])
-            //stateCopy[headerIndex].paras = [];
-            //stateCopy[headerIndex].paras[0].text = e.target.value; //new value
-            //this.setState({ stateCopy }) // update the state with the new value    
-        }
-
     }
     sendHeaderToDb = (id, e) => {
         var dataObj = { text: e.target.value }
@@ -52,25 +43,33 @@ class NoteDetail extends Component {
         })
     }
     sendParasToDb = (id, e) => {
-        var dataObj = { text: e.target.value  }
-        var jsonToSend = JSON.stringify(dataObj);
-        axios.patch(`http://localhost:8080/paras/${id}`, jsonToSend, {
-            headers: { 'Content-Type': 'application/json' },
-        })
+        if (id) {
+            var dataObj = { text: e.target.value  }
+            var jsonToSend = JSON.stringify(dataObj);
+            axios.patch(`http://localhost:8080/paras/${id}`, jsonToSend, {
+                headers: { 'Content-Type': 'application/json' },
+            })
+        }
+
     }
-    createNewPara(headerIndex) {
+    createNewPara(paraIndex, headerIndex) {
         var dataObj = {
-            text: 'whatever',
+            text: '',
+            orderIndex: () => (paraIndex) ? paraIndex + 1 : 0,
             header: { id: headerIndex + 1 }
         }
         var jsonToSend = JSON.stringify(dataObj)
         axios.post(`http://localhost:8080/paras/`, jsonToSend, {
             headers: { 'Content-Type': 'application/json' },
         })
+        .then(() => {
         var stateCopy = [...this.state.noteDetail]; // create copy of state
-        stateCopy[headerIndex].paras = [{ text: 'whatever'}];
+        stateCopy[headerIndex].paras = [{ text: ''}];
         //stateCopy[headerIndex].paras[0].text = 'hOLA'; //new value
         this.setState({ stateCopy }) // update the state with the new value
+        })
+
+
     }
     render() {
         return (
@@ -98,8 +97,9 @@ class NoteDetail extends Component {
                                             className="para"
                                             value={para.text}
                                         ></Textarea>
-                                    ) }) : 
-                                    this.createNewPara(headerIndex)
+                                    )
+                                    // {this.createNewPara(paraIndex+1, headerIndex)} 
+                                    }) : null
                                  }
                             {/* { (data.codeblocks) ?
                             
