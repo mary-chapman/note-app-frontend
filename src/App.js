@@ -18,7 +18,7 @@ class App extends Component {
           <Route exact path="/signup" component={Signup} />
           <Route exact path="/notes" component={Notes} />
           <Route exact path="/main" component={Main} />
-          <Route exact path="/NoteDetail" component={NoteDetail} />
+          <Route exact path="/note/:id" component={NoteDetail} />
 
           <div>
             { console.log(document) }
